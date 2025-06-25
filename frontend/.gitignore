@@ -1,0 +1,18 @@
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+
+# Archivos de entorno (si los llegas a usar)
+.env
+
+# Carpeta de dependencias (por si agregas Node.js más adelante)
+node_modules/
+
+# Archivos temporales o de backup
+*.log
+*.bak
+*.tmp
+
+# Archivos ocultos del editor
+.vscode/
+.idea/
