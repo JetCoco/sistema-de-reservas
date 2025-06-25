@@ -25,29 +25,3 @@ Frontend:
 API:  
 [https://4msxrs5scg.execute-api.us-east-1.amazonaws.com/prod](https://4msxrs5scg.execute-api.us-east-1.amazonaws.com/prod)
 
-## 📁 Estructura del proyecto
-
-sistema-de-reservas/
-├── frontend/
-│   ├── index.html
-│   ├── style.css
-│   ├── app.js
-│   ├── assets/            
-│   └── configs/
-│       ├── alea.json
-│       └── zen.json
-├── backend/
-│   ├── lambda/
-│   │   ├── GetClasses/
-│   │   │   └── index.py
-│   │   └── ReserveClass/
-│   │       └── index.py
-│   └── api_gateway/
-│       └── openapi.yaml    
-├── infrastructure/
-│   ├── templates/          
-│   └── README.md           
-├── scripts/
-│   └── deploy.sh           
-├── README.md
-└── .gitignore
