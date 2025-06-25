@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ALEA Pilates Studio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&family=Poppins&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-color: #fefefe;
+      --text-color: #333333;
+      --header-color: #ffffff;
+      /* se sobrescriben vía JS desde JSON */
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+    }
+
+    header {
+      background-color: var(--header-color);
+      display: flex;
+      justify-content: space-between;
+      padding: 1rem 2rem;
+      border-bottom: 1px solid #eee;
+    }
+
+    nav a {
+      margin: 0 1rem;
+      color: var(--text-color);
+      text-decoration: none;
+    }
+
+    .hero {
+      background-color: var(--accentColor, var(--bg-color));
+      color: var(--text-color);
+      height: 250px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      text-align: center;
+      padding: 1rem;
+    }
+
+    .section { padding: 2rem; max-width: 800px; margin: auto; }
+
+    .class-card {
+      border: 1px solid #ddd;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      border-radius: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .btn {
+      background-color: var(--accentColor);
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .btn:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div id="studio-name"><strong>Studio</strong></div>
+  <nav>
+    <a href="#">Inicio</a>
+    <a href="#">Clases</a>
+    <a href="#">Sobre Nosotros</a>
+    <a href="#">Contacto</a>
+    <a href="#"><strong>Login</strong></a>
+  </nav>
+</header>
+
+<section class="hero" id="hero-text">
+  Movimiento con intención, elegancia en cada postura.
+</section>
+
+<section class="section" id="class-section">
+  <h2>Reserva tu clase</h2>
+  <p>Cargando clases...</p>
+</section>
+
+<script src="app.js"></script>
+</body>
+</html>
