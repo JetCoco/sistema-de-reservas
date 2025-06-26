@@ -25,9 +25,9 @@ jobs:
           role-session-name: github-actions
           aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: Sincronizar archivos con S3
+      - name: Sincronizar archivos con S3 (sin ACL)
         run: |
           aws s3 sync frontend/ s3://alea-pilates-frontend \
             --exclude ".DS_Store" \
             --delete \
-            --acl public-read
+            --no-acl
