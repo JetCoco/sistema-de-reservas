@@ -100,3 +100,6 @@ if (toggleBtn) {
     localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
   });
 }
+
+// Actualizar el año en el footer
+document.getElementById('year').textContent = new Date().getFullYear();
