@@ -17,8 +17,8 @@ jobs:
       - name: Configurar credenciales AWS (OIDC)
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
-          aws-region: ${{ secrets.AWS_REGION }}
+          role-to-assume: arn:aws:iam::487030776862:role/GitHubActionsDeployRole
+          aws-region: us-east-1
 
       - name: Desplegar Lambda GetClasses
         run: |
