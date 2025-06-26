@@ -1,10 +1,10 @@
-name: Deploy GetClasses Lambda
+name: Deploy ReserveClass Lambda
 
 on:
   push:
     paths:
-      - 'backend/lambda/GetClasses/**'
-      - '.github/workflows/deploy-get-classes.yml'
+      - 'backend/lambda/ReserveClass/**'
+      - '.github/workflows/deploy-reserve-class.yml'
     branches: [main]
 
 permissions:
@@ -25,9 +25,9 @@ jobs:
           role-session-name: github-actions
           aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: Desplegar Lambda GetClasses
+      - name: Desplegar Lambda ReserveClass
         run: |
-          zip -j get_classes.zip backend/lambda/GetClasses/index.py
+          zip -j reserve_class.zip backend/lambda/ReserveClass/index.py
           aws lambda update-function-code \
-            --function-name GetClassesFunction \
-            --zip-file fileb://get_classes.zip
+            --function-name ReserveClassFunction \
+            --zip-file fileb://reserve_class.zip
