@@ -18,6 +18,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v2
         with:
           role-to-assume: arn:aws:iam::487030776862:role/GitHubActionsDeployRole
+          role-session-name: github-actions
           aws-region: us-east-1
 
       - name: Desplegar Lambda GetClasses
