@@ -1,7 +1,17 @@
+// Obtener cliente desde la URL
 const params = new URLSearchParams(window.location.search);
 const client = params.get('client') || 'alea';
 
-// visual theme y carga de clases
+// Aplicar preferencia de tema desde localStorage o sistema
+const savedTheme = localStorage.getItem('theme');
+const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+  document.documentElement.classList.add('dark');
+} else {
+  document.documentElement.classList.remove('dark');
+}
+
+// Cargar configuración y clases
 fetch(`configs/${client}.json`)
   .then(res => res.json())
   .then(config => {
@@ -9,9 +19,9 @@ fetch(`configs/${client}.json`)
     loadClassesFromApi();
   });
 
+// Aplicar variables de color y textos desde el archivo JSON
 function applyTheme(config) {
   const root = document.documentElement;
-  // define todas las variables si existen
   Object.entries(config).forEach(([key, val]) => {
     if (key !== 'name' && key !== 'tagline' && key !== 'classes') {
       root.style.setProperty(`--${key}`, val);
@@ -22,6 +32,7 @@ function applyTheme(config) {
   document.getElementById('hero-text').textContent = config.tagline;
 }
 
+// Obtener y renderizar clases
 function loadClassesFromApi() {
   fetch('https://4msxrs5scg.execute-api.us-east-1.amazonaws.com/prod/classes')
     .then(res => res.json())
@@ -55,9 +66,9 @@ function loadClassesFromApi() {
     });
 }
 
-// Función para hacer la reserva
+// Enviar solicitud de reserva
 function reserveClass(classId) {
-  const userId = 'usuario001'; // Esto en el futuro debe ser dinámico
+  const userId = 'usuario001'; // Esto será dinámico en el futuro
   fetch('https://4msxrs5scg.execute-api.us-east-1.amazonaws.com/prod/reserve', {
     method: 'POST',
     headers: {
@@ -68,9 +79,19 @@ function reserveClass(classId) {
     .then(res => res.json())
     .then(data => {
       alert(data.message);
-      loadClassesFromApi(); // recargar lista después de reservar
+      loadClassesFromApi(); // Recargar después de reservar
     })
     .catch(err => {
       console.error("Error al reservar clase:", err);
     });
+}
+
+// Alternar modo oscuro y guardar preferencia
+const toggleBtn = document.getElementById('toggle-dark');
+if (toggleBtn) {
+  toggleBtn.addEventListener('click', () => {
+    const html = document.documentElement;
+    html.classList.toggle('dark');
+    localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+  });
 }
