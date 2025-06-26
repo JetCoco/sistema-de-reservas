@@ -42,7 +42,7 @@ function loadClassesFromApi() {
       classes.forEach(cls => {
         const available = cls.max_capacity - cls.current_capacity;
         const card = document.createElement('div');
-        card.className = 'class-card';
+        card.className = 'border rounded-md p-4 shadow-md bg-white dark:bg-gray-800 dark:text-white flex justify-between items-center';
         card.innerHTML = `
           <div>
             <strong>${cls.icon || '🧘'} ${cls.class_id.split('T')[1]} – ${cls.name}</strong><br/>
@@ -50,7 +50,7 @@ function loadClassesFromApi() {
             Capacidad máxima: ${cls.max_capacity}<br/>
             Lugares disponibles: ${available}
           </div>
-          <button class="btn" ${available <= 0 ? 'disabled' : ''}>
+          <button class="px-4 py-2 rounded text-white ${available <= 0 ? 'bg-gray-400 cursor-not-allowed' : 'bg-teal-600 hover:bg-teal-700'}" ${available <= 0 ? 'disabled' : ''}>
             ${available <= 0 ? 'Lleno' : 'Reservar'}
           </button>
         `;
