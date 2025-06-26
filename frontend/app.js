@@ -38,26 +38,31 @@ function loadClassesFromApi() {
     .then(res => res.json())
     .then(classes => {
       const section = document.getElementById('class-section');
-      section.innerHTML = '<h2>Reserva tu clase</h2>';
+      section.innerHTML = '<h2 class="text-xl font-semibold mb-4">Reserva tu clase</h2>';
       classes.forEach(cls => {
         const available = cls.max_capacity - cls.current_capacity;
         const card = document.createElement('div');
-        card.className = 'border rounded-md p-4 shadow-md bg-white dark:bg-gray-800 dark:text-white flex justify-between items-center';
+        card.className = 'border rounded-md p-4 shadow-md bg-white dark:bg-gray-800 dark:text-white flex justify-between items-center mb-4';
+
         card.innerHTML = `
           <div>
-            <strong>${cls.icon || '🧘'} ${cls.class_id.split('T')[1]} – ${cls.name}</strong><br/>
-            Instructor: ${cls.instructor || 'No definido'}<br/>
-            Capacidad máxima: ${cls.max_capacity}<br/>
-            Lugares disponibles: ${available}
+            <p class="text-lg font-medium">${cls.icon || '🧘'} ${cls.class_id.split('T')[1]} – ${cls.name}</p>
+            <p class="text-sm">Instructor: ${cls.instructor || 'No definido'}</p>
+            <p class="text-sm">Capacidad máxima: ${cls.max_capacity}</p>
+            <p class="text-sm">Lugares disponibles: ${available}</p>
           </div>
-          <button class="px-4 py-2 rounded text-white ${available <= 0 ? 'bg-gray-400 cursor-not-allowed' : 'bg-teal-600 hover:bg-teal-700'}" ${available <= 0 ? 'disabled' : ''}>
+          <button class="px-4 py-2 rounded text-white text-sm ${
+            available <= 0 ? 'bg-gray-400 cursor-not-allowed' : 'bg-teal-600 hover:bg-teal-700'
+          }" ${available <= 0 ? 'disabled' : ''}>
             ${available <= 0 ? 'Lleno' : 'Reservar'}
           </button>
         `;
+
         const btn = card.querySelector('button');
         btn.addEventListener('click', () => {
           reserveClass(cls.class_id);
         });
+
         section.appendChild(card);
       });
     })
