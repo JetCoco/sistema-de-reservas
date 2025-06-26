@@ -29,5 +29,4 @@ jobs:
         run: |
           aws s3 sync frontend/ s3://alea-pilates-frontend \
             --exclude ".DS_Store" \
-            --delete \
-            --no-acl
+            --delete
