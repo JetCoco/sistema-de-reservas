@@ -1,49 +1,30 @@
 <!DOCTYPE html>
-<html lang="es" class="dark">
+<html lang="es">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ALEA Pilates Studio</title>
+  <title>Alea Pilates Studio</title>
   <link rel="stylesheet" href="style.css" />
-  <link rel="icon" type="image/png" href="assets/favicon.png" />
 </head>
 <body>
-  <!-- Header -->
-  <header class="container" style="padding: 1rem 0; display: flex; justify-content: space-between; align-items: center;">
-    <h1 id="studio-name">Nombre del Estudio</h1>
-    <button id="toggle-dark" class="glass-button">☀️ / 🌙</button>
+  <header>
+    <h2 style="color: var(--gold-color);">Alea Pilates</h2>
+    <nav>
+      <a href="#">Inicio</a>
+      <a href="#">Reservas</a>
+      <a href="#">Clases</a>
+    </nav>
   </header>
 
-  <!-- Hero -->
-  <section class="container" style="text-align: center; padding: 2rem 0;">
-    <h2 id="hero-text">Transforma tu cuerpo, mente y alma</h2>
+  <section class="hero">
+    <h1>Bienvenidos a Alea Pilates Studio</h1>
+    <p>Descubre una experiencia única de bienestar y movimiento consciente.</p>
   </section>
 
-  <!-- Clases -->
-  <main class="container" id="class-section">
-    <p>Cargando clases...</p>
-  </main>
-
-  <!-- Footer -->
-  <footer>
-    &copy; <span id="year"></span> Sistema de Reservas. Todos los derechos reservados.
-  </footer>
-
-  <script>
-    // Año en footer
-    document.getElementById('year').textContent = new Date().getFullYear();
-
-    // Botón modo oscuro
-    const toggle = document.getElementById('toggle-dark');
-    toggle.addEventListener('click', () => {
-      document.documentElement.classList.toggle('dark');
-      localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
-    });
-
-    // Tema guardado
-    const stored = localStorage.getItem('theme');
-    if (stored) document.documentElement.classList.toggle('dark', stored === 'dark');
-  </script>
-  <script src="app.js"></script>
+  <!-- Ejemplo de uso del efecto glass adicional -->
+  <section class="glass-box" style="max-width: 600px; margin: 2rem auto;">
+    <h3 style="color: var(--highlight-color);">Nuestro enfoque</h3>
+    <p>Combinamos elegancia, precisión y cuidado para ayudarte a alcanzar tu mejor versión.</p>
+  </section>
 </body>
 </html>
