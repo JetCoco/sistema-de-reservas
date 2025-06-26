@@ -3,41 +3,47 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Estudio de Pilates</title>
-  <link rel="icon" type="image/png" href="assets/favicon.png" />
+  <title>ALEA Pilates Studio</title>
   <link rel="stylesheet" href="style.css" />
+  <link rel="icon" type="image/png" href="assets/favicon.png" />
 </head>
 <body>
   <!-- Header -->
-  <header>
+  <header class="container" style="padding: 1rem 0; display: flex; justify-content: space-between; align-items: center;">
     <h1 id="studio-name">Nombre del Estudio</h1>
-    <div>
-      <nav>
-        <a href="#">Inicio</a>
-        <a href="#">Clases</a>
-        <a href="#">Contacto</a>
-      </nav>
-      <button id="toggle-dark" class="glass-button">☀️ / 🌙</button>
-    </div>
+    <button id="toggle-dark" class="glass-button">☀️ / 🌙</button>
   </header>
 
   <!-- Hero -->
-  <section class="hero">
+  <section class="container" style="text-align: center; padding: 2rem 0;">
     <h2 id="hero-text">Transforma tu cuerpo, mente y alma</h2>
   </section>
 
   <!-- Clases -->
-  <main class="section">
-    <section id="class-section">
-      <p class="loading">Cargando clases...</p>
-    </section>
+  <main class="container" id="class-section">
+    <p>Cargando clases...</p>
   </main>
 
   <!-- Footer -->
-  <footer class="section" style="text-align:center; font-size: 0.9rem; color: #999;">
+  <footer>
     &copy; <span id="year"></span> Sistema de Reservas. Todos los derechos reservados.
   </footer>
 
-  <script src="app.js" defer></script>
+  <script>
+    // Año en footer
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Botón modo oscuro
+    const toggle = document.getElementById('toggle-dark');
+    toggle.addEventListener('click', () => {
+      document.documentElement.classList.toggle('dark');
+      localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+    });
+
+    // Tema guardado
+    const stored = localStorage.getItem('theme');
+    if (stored) document.documentElement.classList.toggle('dark', stored === 'dark');
+  </script>
+  <script src="app.js"></script>
 </body>
 </html>
