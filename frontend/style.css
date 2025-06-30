@@ -110,3 +110,16 @@ nav a {
   background-color: #a0aec0;
   cursor: not-allowed;
 }
+
+.btn {
+  padding: 0.5rem 1rem;
+  background-color: #7bb0a8;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.btn:hover {
+  background-color: #609c91;
+}
