@@ -3,29 +3,41 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Alea Pilates Studio</title>
+  <title>Alea Pilates</title>
   <link rel="stylesheet" href="style.css" />
+  <link rel="icon" type="image/png" href="assets/favicon.png" />
 </head>
-<body>
-  <header>
-    <h2 style="color: var(--gold-color);">Alea Pilates</h2>
+<body class="light">
+  <header class="header">
+    <div class="logo">Alea Pilates</div>
     <nav>
       <a href="#">Inicio</a>
       <a href="#">Reservas</a>
       <a href="#">Clases</a>
+      <button id="toggle-dark" class="glass-button">🌙/☀️</button>
     </nav>
   </header>
 
   <section class="hero">
-    <h1>Bienvenidos a Alea Pilates Studio</h1>
-    <p>Descubre una experiencia única de bienestar y movimiento consciente.</p>
+    <div class="glass-box">
+      <h1>Bienvenidos a Alea Pilates Studio</h1>
+      <p>Descubre una experiencia única de bienestar y movimiento consciente.</p>
+    </div>
   </section>
-  <section id="class-section" class="glass-box" style="max-width: 800px; margin: 2rem auto;"></section>
 
-  <!-- Ejemplo de uso del efecto glass adicional -->
-  <section class="glass-box" style="max-width: 600px; margin: 2rem auto;">
-    <h3 style="color: var(--highlight-color);">Nuestro enfoque</h3>
-    <p>Combinamos elegancia, precisión y cuidado para ayudarte a alcanzar tu mejor versión.</p>
+  <section class="section">
+    <div class="glass-box">
+      <h2>Nuestro enfoque</h2>
+      <p>Combinamos elegancia, precisión y cuidado para ayudarte a alcanzar tu mejor versión.</p>
+    </div>
   </section>
+
+  <section id="class-section" class="section"></section>
+
+  <footer class="footer">
+    &copy; <span id="year"></span> Alea Pilates. Todos los derechos reservados.
+  </footer>
+
+  <script src="app.js"></script>
 </body>
 </html>

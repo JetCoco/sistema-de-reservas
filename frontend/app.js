@@ -2,14 +2,23 @@
 const params = new URLSearchParams(window.location.search);
 const client = params.get('client') || 'alea';
 
-// Preferencia de tema
+// Aplicar modo oscuro guardado
 const savedTheme = localStorage.getItem('theme');
-const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
-  document.documentElement.classList.add('dark');
+if (savedTheme === 'dark') {
+  document.body.classList.add('dark');
 } else {
-  document.documentElement.classList.remove('dark');
+  document.body.classList.remove('dark');
 }
+
+// Toggle de modo oscuro
+const toggleBtn = document.getElementById('toggle-dark');
+toggleBtn.addEventListener('click', () => {
+  document.body.classList.toggle('dark');
+  localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
+});
+
+// Año dinámico
+document.getElementById('year').textContent = new Date().getFullYear();
 
 // Cargar configuración visual y clases
 fetch(`configs/${client}.json`)
@@ -19,56 +28,48 @@ fetch(`configs/${client}.json`)
     loadClassesFromApi();
   });
 
-// Aplicar colores y textos del archivo de configuración
 function applyTheme(config) {
-  const root = document.documentElement;
-  Object.entries(config).forEach(([key, val]) => {
-    if (!['name', 'tagline'].includes(key)) {
-      root.style.setProperty(`--${key}`, val);
-    }
-  });
-  document.getElementById('studio-name').textContent = config.name;
-  document.title = config.name;
-  document.getElementById('hero-text').textContent = config.tagline;
+  document.title = config.name || 'Estudio de Pilates';
+  document.querySelector('.logo').textContent = config.name || 'Estudio';
 }
 
-// Cargar clases desde la API y mostrarlas
 function loadClassesFromApi() {
   fetch('https://4msxrs5scg.execute-api.us-east-1.amazonaws.com/prod/classes')
     .then(res => res.json())
     .then(classes => {
       const section = document.getElementById('class-section');
-      section.innerHTML = '<h2>Reserva tu clase</h2>';
+      section.innerHTML = '<h2 style="margin-bottom: 1rem;">Reserva tu clase</h2>';
+
       classes.forEach(cls => {
         const available = cls.max_capacity - cls.current_capacity;
+
         const card = document.createElement('div');
-        card.className = 'glass-card';
+        card.className = 'class-card glass-card';
 
         card.innerHTML = `
           <div>
-            <strong>${cls.icon || '🧘'} ${cls.class_id.split('T')[1]} – ${cls.name}</strong><br/>
-            Instructor: ${cls.instructor || 'No definido'}<br/>
-            Capacidad máxima: ${cls.max_capacity}<br/>
-            Lugares disponibles: ${available}
+            <p><strong>${cls.icon || '🧘'} ${cls.class_id.split('T')[1]} – ${cls.name}</strong></p>
+            <p>Instructor: ${cls.instructor}</p>
+            <p>Capacidad máxima: ${cls.max_capacity}</p>
+            <p>Lugares disponibles: ${available}</p>
           </div>
-          <button class="glass-button" ${available <= 0 ? 'disabled style="cursor: not-allowed; opacity: 0.5;"' : ''}>
+          <button class="btn" ${available <= 0 ? 'disabled style="opacity:0.5;"' : ''}>
             ${available <= 0 ? 'Lleno' : 'Reservar'}
           </button>
         `;
 
-        const btn = card.querySelector('button');
-        btn.addEventListener('click', () => reserveClass(cls.class_id));
+        card.querySelector('button').addEventListener('click', () => {
+          reserveClass(cls.class_id);
+        });
+
         section.appendChild(card);
       });
     })
-    .catch(err => {
-      console.error("Error al cargar clases:", err);
-    });
+    .catch(console.error);
 }
 
-// Reservar clase
 function reserveClass(classId) {
-  const userId = 'usuario001'; // En el futuro se puede dinamizar
+  const userId = 'usuario001';
   fetch('https://4msxrs5scg.execute-api.us-east-1.amazonaws.com/prod/reserve', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -77,19 +78,9 @@ function reserveClass(classId) {
     .then(res => res.json())
     .then(data => {
       alert(data.message);
-      loadClassesFromApi(); // Recargar lista
+      loadClassesFromApi();
     })
     .catch(err => {
-      console.error("Error al reservar clase:", err);
+      console.error('Error al reservar:', err);
     });
-}
-
-// Alternar tema manual
-const toggleBtn = document.getElementById('toggle-dark');
-if (toggleBtn) {
-  toggleBtn.addEventListener('click', () => {
-    const html = document.documentElement;
-    html.classList.toggle('dark');
-    localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
-  });
 }
