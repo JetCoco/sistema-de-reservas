@@ -84,3 +84,18 @@ function reserveClass(classId) {
       console.error('Error al reservar:', err);
     });
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+  const toggleBtn = document.getElementById('toggle-dark');
+  const isDark = localStorage.getItem('theme') === 'dark';
+
+  if (isDark) {
+    document.documentElement.classList.add('dark');
+  }
+
+  toggleBtn?.addEventListener('click', () => {
+    document.documentElement.classList.toggle('dark');
+    const isDarkNow = document.documentElement.classList.contains('dark');
+    localStorage.setItem('theme', isDarkNow ? 'dark' : 'light');
+  });
+});
