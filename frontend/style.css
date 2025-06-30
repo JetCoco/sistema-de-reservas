@@ -71,3 +71,42 @@ nav a {
   padding: 2rem;
   color: var(--text-color);
 }
+
+.class-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.15);
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: background-color 0.3s ease;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.dark .class-card {
+  background: rgba(30, 41, 59, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.class-card p {
+  margin: 0.2rem 0;
+}
+
+.class-card button {
+  padding: 0.5rem 1rem;
+  background-color: #38b2ac;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.class-card button:disabled {
+  background-color: #a0aec0;
+  cursor: not-allowed;
+}
