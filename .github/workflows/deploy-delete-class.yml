@@ -1,0 +1,32 @@
+name: Deploy DeleteClassFunction
+
+on:
+  push:
+    paths:
+      - 'backend/lambda/DeleteClass/**'
+      - '.github/workflows/deploy-delete-class.yml'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: arn:aws:iam::487030776862:role/GitHubActionsDeployRole
+          aws-region: us-east-1
+
+      - name: Deploy DeleteClassFunction Lambda
+        run: |
+          zip -j delete_class.zip backend/lambda/DeleteClass/index.py
+          aws lambda update-function-code \
+            --function-name DeleteClassFunction \
+            --zip-file fileb://delete_class.zip

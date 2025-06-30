@@ -1,0 +1,32 @@
+name: Deploy CreateClassFunction
+
+on:
+  push:
+    paths:
+      - 'backend/lambda/CreateClass/**'
+      - '.github/workflows/deploy-create-class.yml'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: arn:aws:iam::487030776862:role/GitHubActionsDeployRole
+          aws-region: us-east-1
+
+      - name: Deploy CreateClassFunction Lambda
+        run: |
+          zip -j create_class.zip backend/lambda/CreateClass/index.py
+          aws lambda update-function-code \
+            --function-name CreateClassFunction \
+            --zip-file fileb://create_class.zip

@@ -1,0 +1,32 @@
+name: Deploy UpdateClassFunction
+
+on:
+  push:
+    paths:
+      - 'backend/lambda/UpdateClass/**'
+      - '.github/workflows/deploy-update-class.yml'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: arn:aws:iam::487030776862:role/GitHubActionsDeployRole
+          aws-region: us-east-1
+
+      - name: Deploy UpdateClassFunction Lambda
+        run: |
+          zip -j update_class.zip backend/lambda/UpdateClass/index.py
+          aws lambda update-function-code \
+            --function-name UpdateClassFunction \
+            --zip-file fileb://update_class.zip
