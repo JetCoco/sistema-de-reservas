@@ -1,76 +1,101 @@
-const API_URL = "https://4msxrs5scg.execute-api.us-east-1.amazonaws.com/prod/classes";
+const API_URL = 'https://4msxrs5scg.execute-api.us-east-1.amazonaws.com/prod';
 
-// Alternar modo oscuro
-document.getElementById("toggle-dark").addEventListener("click", () => {
-  document.documentElement.classList.toggle("dark");
-});
+async function loadClasses() {
+  try {
+    const res = await fetch(`${API_URL}/classes`);
+    const classes = await res.json();
 
-// Cargar clases al iniciar
-document.addEventListener("DOMContentLoaded", loadClasses);
+    const container = document.getElementById('admin-class-list');
+    container.innerHTML = '';
 
-// Mostrar clases existentes
-function loadClasses() {
-  fetch(API_URL)
-    .then(res => res.json())
-    .then(data => {
-      const list = document.getElementById("class-list");
-      list.innerHTML = "";
-      data.forEach(cls => {
-        const div = document.createElement("div");
-        div.className = "glass-card";
-        div.innerHTML = `
-          <p><strong>${cls.icon || "🧘"} ${cls.name}</strong> — Instructor: ${cls.instructor} — Cupo: ${cls.current_capacity}/${cls.max_capacity}</p>
+    classes.forEach(cls => {
+      const item = document.createElement('div');
+      item.className = 'class-item';
+
+      item.innerHTML = `
+        <h3>${cls.icon || '🧘'} ${cls.name}</h3>
+        <p>Instructor: ${cls.instructor || 'No definido'}</p>
+        <p>Cupo: ${cls.current_capacity}/${cls.max_capacity}</p>
+        <div class="class-actions">
           <button onclick='editClass(${JSON.stringify(cls)})'>✏️ Editar</button>
-          <button onclick='deleteClass("${cls.class_id}")'>🗑️ Eliminar</button>
-        `;
-        list.appendChild(div);
-      });
+          <button class="delete" onclick='deleteClass("${cls.class_id}")'>🗑️ Eliminar</button>
+        </div>
+      `;
+
+      container.appendChild(item);
     });
+  } catch (err) {
+    console.error('Error al cargar clases:', err);
+  }
 }
 
-// Editar clase
-function editClass(cls) {
-  document.getElementById("class_id").value = cls.class_id;
-  document.getElementById("name").value = cls.name;
-  document.getElementById("instructor").value = cls.instructor;
-  document.getElementById("max_capacity").value = cls.max_capacity;
-  document.getElementById("current_capacity").value = cls.current_capacity;
-  document.getElementById("icon").value = cls.icon || "";
-}
+async function saveClass() {
+  const class_id = document.getElementById('class_id').value;
+  const name = document.getElementById('name').value;
+  const instructor = document.getElementById('instructor').value;
+  const max_capacity = parseInt(document.getElementById('max_capacity').value);
+  const current_capacity = parseInt(document.getElementById('current_capacity').value);
+  const icon = document.getElementById('icon').value;
 
-// Eliminar clase
-function deleteClass(classId) {
-  if (!confirm("¿Seguro que deseas eliminar esta clase?")) return;
-
-  fetch(API_URL, {
-    method: "DELETE",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ class_id: classId }),
-  }).then(loadClasses);
-}
-
-// Crear o actualizar clase
-document.getElementById("class-form").addEventListener("submit", e => {
-  e.preventDefault();
-  const data = {
-    class_id: document.getElementById("class_id").value,
-    name: document.getElementById("name").value,
-    instructor: document.getElementById("instructor").value,
-    max_capacity: parseInt(document.getElementById("max_capacity").value),
-    current_capacity: parseInt(document.getElementById("current_capacity").value),
-    icon: document.getElementById("icon").value || "🧘",
+  const payload = {
+    class_id, name, instructor, max_capacity, current_capacity, icon
   };
 
-  const method = data.class_id ? "PUT" : "POST";
+  const url = `${API_URL}/classes`;
+  const method = class_id ? 'PUT' : 'POST';
 
-  fetch(API_URL, {
-    method,
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
-  })
-    .then(res => res.json())
-    .then(() => {
-      e.target.reset();
-      loadClasses();
+  try {
+    const res = await fetch(url, {
+      method,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
     });
-});
+
+    const result = await res.json();
+    alert(result.message || 'Operación realizada');
+    resetForm();
+    loadClasses();
+  } catch (err) {
+    console.error('Error al guardar clase:', err);
+    alert('Error al guardar clase');
+  }
+}
+
+function editClass(cls) {
+  document.getElementById('class_id').value = cls.class_id || '';
+  document.getElementById('name').value = cls.name || '';
+  document.getElementById('instructor').value = cls.instructor || '';
+  document.getElementById('max_capacity').value = cls.max_capacity || '';
+  document.getElementById('current_capacity').value = cls.current_capacity || '';
+  document.getElementById('icon').value = cls.icon || '';
+}
+
+async function deleteClass(class_id) {
+  if (!confirm('¿Estás seguro de eliminar esta clase?')) return;
+
+  try {
+    const res = await fetch(`${API_URL}/classes`, {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ class_id })
+    });
+
+    const result = await res.json();
+    alert(result.message || 'Clase eliminada');
+    loadClasses();
+  } catch (err) {
+    console.error('Error al eliminar clase:', err);
+    alert('Error al eliminar clase');
+  }
+}
+
+function resetForm() {
+  document.getElementById('class_id').value = '';
+  document.getElementById('name').value = '';
+  document.getElementById('instructor').value = '';
+  document.getElementById('max_capacity').value = '';
+  document.getElementById('current_capacity').value = '';
+  document.getElementById('icon').value = '';
+}
+
+window.onload = loadClasses;

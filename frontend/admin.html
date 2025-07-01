@@ -3,39 +3,32 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Panel de Administración - ALEA Pilates Studio</title>
+  <title>Administrador – ALEA Pilates Studio</title>
   <link rel="stylesheet" href="style.css" />
 </head>
-<body>
-  <header class="navbar glass-box">
-    <h1>ALEA Pilates Studio – Admin</h1>
-    <button id="toggle-mode" class="toggle-button">🌞/🌙</button>
-  </header>
+<body class="dark">
 
-  <main>
-    <section class="glass-box">
-      <h2>Clases Registradas</h2>
-      <div id="class-list" class="admin-class-list"></div>
+  <div class="admin-container">
+    <h1 class="admin-title">Panel de Administración – ALEA Pilates Studio</h1>
+
+    <section id="admin-class-list" class="class-list">
+      <!-- Aquí se insertan las clases dinámicamente -->
     </section>
 
-    <section class="glass-box">
+    <section id="admin-form-section">
       <h2>Agregar / Editar Clase</h2>
-      <form id="class-form" class="admin-form">
-        <input type="hidden" id="class-id" />
-        <input type="text" id="name" placeholder="Nombre de la clase" required />
-        <input type="text" id="instructor" placeholder="Instructor" required />
-        <input type="number" id="max_capacity" placeholder="Capacidad máxima" min="1" required />
-        <input type="number" id="current_capacity" placeholder="Capacidad actual" min="0" required />
-        <input type="text" id="icon" placeholder="Emoji o icono (opcional)" />
-        <button type="submit">Guardar</button>
-      </form>
+      <div class="form-grid">
+        <input type="hidden" id="class_id">
+        <input type="text" id="name" placeholder="Nombre de la clase">
+        <input type="text" id="instructor" placeholder="Instructor">
+        <input type="number" id="max_capacity" placeholder="Capacidad máxima">
+        <input type="number" id="current_capacity" placeholder="Capacidad actual">
+        <input type="text" id="icon" placeholder="Emoji o icono (opcional)">
+      </div>
+      <button class="admin-save-btn" onclick="saveClass()">Guardar</button>
     </section>
-  </main>
+  </div>
 
-  <footer class="glass-box">
-    <p>&copy; 2025 ALEA Pilates Studio – Panel de Administración</p>
-  </footer>
-
-  <script src="admin.js"></script>
+  <script src="admin.js" defer></script>
 </body>
 </html>
