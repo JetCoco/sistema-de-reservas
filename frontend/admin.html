@@ -1,60 +1,52 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
   <title>Administrador – ALEA Pilates Studio</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css">
 </head>
-<body class="dark">
+<body>
+  <div class="container">
+    <h1>Panel de Administración – ALEA Pilates Studio</h1>
 
-  <div class="admin-container">
-    <h1 class="admin-title">Panel de Administración – ALEA Pilates Studio</h1>
+    <div class="admin-controls">
+      <button id="btn-open-create">➕ Crear Clase</button>
+    </div>
 
-    <section id="admin-class-list" class="class-list">
-      <!-- Aquí se insertan las clases dinámicamente -->
-    </section>
-
-    <section id="admin-form-section">
-      <h2>Agregar / Editar Clase</h2>
-      <div class="form-grid">
-        <input type="hidden" id="class_id">
-        <input type="text" id="name" placeholder="Nombre de la clase">
-        <input type="text" id="instructor" placeholder="Instructor">
-        <input type="number" id="max_capacity" placeholder="Capacidad máxima">
-        <input type="number" id="current_capacity" placeholder="Capacidad actual">
-        <input type="text" id="icon" placeholder="Emoji o icono (opcional)">
-      </div>
-      <button class="admin-save-btn" onclick="saveClass()">Guardar</button>
-    </section>
+    <div id="admin-class-list" class="class-list">
+      <!-- Clases renderizadas aquí -->
+    </div>
   </div>
 
-  <script src="admin.js" defer></script>
+  <!-- Modal -->
+  <div id="modal" class="modal hidden">
+    <div class="modal-content">
+      <h2 id="modal-title">Agregar Clase</h2>
+      <form id="class-form" class="class-form">
+        <input type="hidden" name="class-id">
+        <label>Nombre de la Clase</label>
+        <input type="text" name="name" placeholder="Ej. Pilates Básico" required>
 
-  <!-- Botón para agregar clase -->
-    <div class="text-center my-4">
-        <button id="btn-open-create" class="btn">Agregar Clase</button>
-    </div>
-    
-    <!-- Modal -->
-    <div id="modal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center hidden z-50">
-        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg w-full max-w-md relative">
-        <h2 id="modal-title" class="text-xl font-bold mb-4 text-center">Agregar Clase</h2>
-        
-        <form id="class-form" class="form-grid">
-            <input type="hidden" id="class-id" />
-            <input type="text" id="name" placeholder="Nombre de la clase" required />
-            <input type="text" id="instructor" placeholder="Instructor" />
-            <input type="number" id="max_capacity" placeholder="Capacidad máxima" />
-            <input type="number" id="current_capacity" placeholder="Capacidad actual" />
-            <input type="text" id="icon" placeholder="Icono (emoji)" />
-        </form>
-    
-        <div class="flex justify-end mt-4 gap-2">
-            <button id="btn-cancel" class="btn bg-gray-400 hover:bg-gray-500">Cancelar</button>
-            <button id="btn-save" class="btn bg-green-500 hover:bg-green-600 text-white">Guardar</button>
+        <label>Instructor</label>
+        <input type="text" name="instructor" placeholder="Ej. Ale" required>
+
+        <label>Capacidad Máxima</label>
+        <input type="number" name="max_capacity" placeholder="Ej. 5" required>
+
+        <label>Capacidad Actual</label>
+        <input type="number" name="current_capacity" placeholder="Ej. 0" required>
+
+        <label>Emoji o ícono (opcional)</label>
+        <input type="text" name="icon" placeholder="Ej. 🧘">
+
+        <div class="form-buttons">
+          <button type="button" id="btn-cancel">Cancelar</button>
+          <button type="button" id="btn-save">Guardar</button>
         </div>
-        </div>
+      </form>
     </div>
+  </div>
+
+  <script src="admin.js"></script>
 </body>
 </html>
