@@ -272,3 +272,7 @@ nav a {
 #modal .btn:hover {
   opacity: 0.9;
 }
+
+#modal {
+  display: none; /* Oculto por defecto */
+}
