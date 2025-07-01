@@ -99,3 +99,59 @@ function resetForm() {
 }
 
 window.onload = loadClasses;
+
+const modal = document.getElementById('modal');
+const modalTitle = document.getElementById('modal-title');
+const btnOpenCreate = document.getElementById('btn-open-create');
+const btnCancel = document.getElementById('btn-cancel');
+const btnSave = document.getElementById('btn-save');
+const form = document.getElementById('class-form');
+
+function openModal(mode = 'create', data = {}) {
+  modal.classList.remove('hidden');
+  modalTitle.textContent = mode === 'edit' ? 'Editar Clase' : 'Agregar Clase';
+
+  // Llenar el formulario si estamos editando
+  form['class-id'].value = data.class_id || '';
+  form['name'].value = data.name || '';
+  form['instructor'].value = data.instructor || '';
+  form['max_capacity'].value = data.max_capacity || '';
+  form['current_capacity'].value = data.current_capacity || '';
+  form['icon'].value = data.icon || '';
+}
+
+function closeModal() {
+  modal.classList.add('hidden');
+  form.reset();
+}
+
+btnOpenCreate.addEventListener('click', () => openModal('create'));
+btnCancel.addEventListener('click', closeModal);
+
+btnSave.addEventListener('click', async () => {
+  const classData = {
+    class_id: form['class-id'].value,
+    name: form['name'].value,
+    instructor: form['instructor'].value,
+    max_capacity: parseInt(form['max_capacity'].value || '10'),
+    current_capacity: parseInt(form['current_capacity'].value || '0'),
+    icon: form['icon'].value
+  };
+
+  const isEdit = !!classData.class_id;
+  const method = isEdit ? 'PUT' : 'POST';
+
+  const response = await fetch('https://4msxrs5scg.execute-api.us-east-1.amazonaws.com/prod/classes', {
+    method,
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(classData)
+  });
+
+  if (response.ok) {
+    alert(isEdit ? 'Clase actualizada' : 'Clase creada');
+    closeModal();
+    loadClasses(); // tu función para refrescar el listado
+  } else {
+    alert('Error al guardar la clase');
+  }
+});

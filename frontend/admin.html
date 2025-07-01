@@ -30,5 +30,31 @@
   </div>
 
   <script src="admin.js" defer></script>
+
+  <!-- Botón para agregar clase -->
+    <div class="text-center my-4">
+        <button id="btn-open-create" class="btn">Agregar Clase</button>
+    </div>
+    
+    <!-- Modal -->
+    <div id="modal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center hidden z-50">
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg w-full max-w-md relative">
+        <h2 id="modal-title" class="text-xl font-bold mb-4 text-center">Agregar Clase</h2>
+        
+        <form id="class-form" class="form-grid">
+            <input type="hidden" id="class-id" />
+            <input type="text" id="name" placeholder="Nombre de la clase" required />
+            <input type="text" id="instructor" placeholder="Instructor" />
+            <input type="number" id="max_capacity" placeholder="Capacidad máxima" />
+            <input type="number" id="current_capacity" placeholder="Capacidad actual" />
+            <input type="text" id="icon" placeholder="Icono (emoji)" />
+        </form>
+    
+        <div class="flex justify-end mt-4 gap-2">
+            <button id="btn-cancel" class="btn bg-gray-400 hover:bg-gray-500">Cancelar</button>
+            <button id="btn-save" class="btn bg-green-500 hover:bg-green-600 text-white">Guardar</button>
+        </div>
+        </div>
+    </div>
 </body>
 </html>

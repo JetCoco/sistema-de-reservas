@@ -216,3 +216,59 @@ nav a {
   border-radius: 8px;
   cursor: pointer;
 }
+
+/* Modal general */
+#modal {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+/* Contenedor del modal */
+#modal .modal-content {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 1rem;
+  padding: 2rem;
+  max-width: 500px;
+  width: 100%;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+/* Dark mode para modal */
+.dark #modal .modal-content {
+  background: rgba(30, 41, 59, 0.95);
+  color: #f0f0f0;
+}
+
+/* Formulario */
+#modal input {
+  width: 100%;
+  padding: 0.6rem;
+  margin-bottom: 1rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.dark #modal input {
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid #555;
+  color: #f0f0f0;
+}
+
+/* Botones del modal */
+#modal .btn {
+  padding: 0.5rem 1rem;
+  font-weight: bold;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+#modal .btn:hover {
+  opacity: 0.9;
+}
