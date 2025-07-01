@@ -98,7 +98,7 @@ function resetForm() {
   document.getElementById('icon').value = '';
 }
 
-window.onload = loadClasses;
+
 
 const modal = document.getElementById('modal');
 const modalTitle = document.getElementById('modal-title');
@@ -155,3 +155,5 @@ btnSave.addEventListener('click', async () => {
     alert('Error al guardar la clase');
   }
 });
+
+window.onload = loadClasses;
