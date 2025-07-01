@@ -8,6 +8,7 @@ def lambda_handler(event, context):
     try:
         data = json.loads(event['body'])
         class_id = data['class_id']
+        client_id = data['client_id']
 
         update_expression = "SET "
         expression_values = {}
@@ -24,7 +25,10 @@ def lambda_handler(event, context):
         update_expression = update_expression.rstrip(", ")
 
         update_params = {
-            "Key": {'class_id': class_id},
+            "Key": {
+                'class_id': class_id,
+                'client_id': client_id
+            },
             "UpdateExpression": update_expression,
             "ExpressionAttributeValues": expression_values
         }

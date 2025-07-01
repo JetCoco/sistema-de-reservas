@@ -11,27 +11,30 @@ def lambda_handler(event, context):
         body = json.loads(event['body'])
         class_id = body['class_id']
         user_id = body['user_id']
+        client_id = body['client_id']
 
-        # 1. Obtener clase
-        class_item = classes_table.get_item(Key={'class_id': class_id}).get('Item')
+        class_item = classes_table.get_item(
+            Key={'class_id': class_id, 'client_id': client_id}
+        ).get('Item')
+
         if not class_item:
             return response(404, "Clase no encontrada")
 
         if class_item['current_capacity'] >= class_item['max_capacity']:
             return response(400, "Clase llena")
 
-        # 2. Agregar reserva
         reservations_table.put_item(
             Item={
-                'class_id': class_id,
+                'reservation_id': f"{user_id}-{class_id}",
                 'user_id': user_id,
+                'class_id': class_id,
+                'client_id': client_id,
                 'timestamp': context.aws_request_id
             }
         )
 
-        # 3. Incrementar capacidad actual
         classes_table.update_item(
-            Key={'class_id': class_id},
+            Key={'class_id': class_id, 'client_id': client_id},
             UpdateExpression='SET current_capacity = current_capacity + :inc',
             ExpressionAttributeValues={':inc': 1}
         )
@@ -46,6 +49,6 @@ def lambda_handler(event, context):
 def response(code, message):
     return {
         'statusCode': code,
-        'headers': { 'Content-Type': 'application/json' },
-        'body': json.dumps({ 'message': message })
+        'headers': {'Content-Type': 'application/json'},
+        'body': json.dumps({'message': message})
     }

@@ -1,36 +1,37 @@
 import json
 import boto3
 import decimal
+from boto3.dynamodb.conditions import Key
 
 dynamodb = boto3.resource('dynamodb')
 table = dynamodb.Table('Classes')
 
-# Clase para convertir Decimal a float en JSON
 class DecimalEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, decimal.Decimal):
             return float(obj)
-        return super(DecimalEncoder, self).default(obj)
+        return super().default(obj)
 
 def lambda_handler(event, context):
     try:
-        response = table.scan()
-        items = response.get('Items', [])
-        
+        client_id = event['queryStringParameters']['client_id']
+        response = table.query(
+            IndexName='client_id-index',
+            KeyConditionExpression=Key('client_id').eq(client_id)
+        )
+
         return {
             "statusCode": 200,
             "headers": {
                 "Content-Type": "application/json",
                 "Access-Control-Allow-Origin": "*"
             },
-            "body": json.dumps(items, cls=DecimalEncoder)
+            "body": json.dumps(response.get('Items', []), cls=DecimalEncoder)
         }
 
     except Exception as e:
         return {
             "statusCode": 500,
-            "headers": {
-                "Access-Control-Allow-Origin": "*"
-            },
+            "headers": {"Access-Control-Allow-Origin": "*"},
             "body": json.dumps({"error": str(e)})
         }

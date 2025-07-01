@@ -1,6 +1,5 @@
 import json
 import boto3
-from boto3.dynamodb.conditions import Key
 import uuid
 
 dynamodb = boto3.resource('dynamodb')
@@ -13,6 +12,7 @@ def lambda_handler(event, context):
         class_id = data.get('class_id') or str(uuid.uuid4())
         item = {
             'class_id': class_id,
+            'client_id': data['client_id'],
             'name': data['name'],
             'instructor': data.get('instructor', 'No definido'),
             'max_capacity': int(data.get('max_capacity', 10)),
