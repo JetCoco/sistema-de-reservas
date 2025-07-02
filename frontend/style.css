@@ -314,3 +314,6 @@ nav a {
   justify-content: flex-end;
   gap: 10px;
 }
+body.instructor {
+  background: url('assets/instructor-bg.jpg') center/cover fixed;
+}
