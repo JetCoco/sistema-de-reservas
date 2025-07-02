@@ -6,9 +6,20 @@ table = dynamodb.Table('Classes')
 
 def lambda_handler(event, context):
     try:
+        claims = event['requestContext']['authorizer']['claims']
+        client_id = claims.get('custom:client_id')
+        if not client_id:
+            return error_response("Falta el client_id en el token")
+
         data = json.loads(event['body'])
         class_id = data['class_id']
-        client_id = data['client_id']
+
+        # Obtener clase actual y validar client_id
+        existing = table.get_item(Key={'class_id': class_id}).get('Item')
+        if not existing:
+            return error_response("Clase no encontrada")
+        if existing.get('client_id') != client_id:
+            return error_response("No tienes permiso para modificar esta clase")
 
         update_expression = "SET "
         expression_values = {}
@@ -25,10 +36,7 @@ def lambda_handler(event, context):
         update_expression = update_expression.rstrip(", ")
 
         update_params = {
-            "Key": {
-                'class_id': class_id,
-                'client_id': client_id
-            },
+            "Key": {'class_id': class_id},
             "UpdateExpression": update_expression,
             "ExpressionAttributeValues": expression_values
         }
@@ -45,8 +53,11 @@ def lambda_handler(event, context):
         }
 
     except Exception as e:
-        return {
-            "statusCode": 500,
-            "headers": {"Access-Control-Allow-Origin": "*"},
-            "body": json.dumps({"error": str(e)})
-        }
+        return error_response(str(e))
+
+def error_response(msg):
+    return {
+        "statusCode": 500,
+        "headers": {"Access-Control-Allow-Origin": "*"},
+        "body": json.dumps({"error": msg})
+    }

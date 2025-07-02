@@ -101,7 +101,8 @@ btnSave.addEventListener('click', async () => {
     instructor: form['instructor'].value,
     max_capacity: parseInt(form['max_capacity'].value || '10'),
     current_capacity: parseInt(form['current_capacity'].value || '0'),
-    icon: form['icon'].value
+    icon: form['icon'].value,
+    client_id: 'alea'  // ✅ requerido por backend
   };
 
   const isEdit = !!classData.class_id;
