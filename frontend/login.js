@@ -6,7 +6,7 @@ async function exchangeCodeForToken() {
     }
   
     const clientId = '3014r1ilcn23v8fibb2ukr2urv';
-    const redirectUri = 'https://alea-pilates-frontend.s3.us-east-1.amazonaws.com/login-success.html';
+    const redirectUri = 'https://sistema-reservas-frontend.s3.us-east-1.amazonaws.com/login-success.html';
     const domain = 'https://us-east-1sgjjg5crv.auth.us-east-1.amazoncognito.com';
   
     const body = new URLSearchParams({

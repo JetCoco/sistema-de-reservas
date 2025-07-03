@@ -25,7 +25,7 @@ jobs:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: Desplegar Lambda UpdateClass
+      - name: Deploy Lambda UpdateClass
         run: |
           zip -j update_class.zip backend/lambda/UpdateClass/index.py
           aws lambda update-function-code \

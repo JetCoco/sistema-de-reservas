@@ -25,7 +25,7 @@ jobs:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: Desplegar Lambda DeleteClass
+      - name: Deploy Lambda DeleteClass
         run: |
           zip -j delete_class.zip backend/lambda/DeleteClass/index.py
           aws lambda update-function-code \

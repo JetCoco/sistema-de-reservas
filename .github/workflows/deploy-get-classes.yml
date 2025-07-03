@@ -25,7 +25,7 @@ jobs:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: Desplegar Lambda GetClasses
+      - name: Deploy Lambda GetClasses
         run: |
           zip -j get_classes.zip backend/lambda/GetClasses/index.py
           aws lambda update-function-code \
