@@ -27,6 +27,6 @@ jobs:
 
       - name: Sincronizar archivos con S3 (sin ACL)
         run: |
-          aws s3 sync frontend/ s3://alea-pilates-frontend \
+          aws s3 sync frontend/ s3://sistema-reservas-frontend \
             --exclude ".DS_Store" \
             --delete

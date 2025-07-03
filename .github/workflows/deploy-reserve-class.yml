@@ -1,4 +1,4 @@
-name: Deploy ReserveClass Lambda
+name: Deploy ReserveClassFunction
 
 on:
   push:
@@ -14,6 +14,7 @@ permissions:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout código
         uses: actions/checkout@v3
@@ -22,7 +23,6 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v2
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
-          role-session-name: github-actions
           aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Desplegar Lambda ReserveClass
