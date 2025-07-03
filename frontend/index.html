@@ -14,9 +14,7 @@
       <a href="#">Inicio</a>
       <a href="#">Reservas</a>
       <a href="#">Clases</a>
-      <button id="toggle-dark" class="glass-button">
-        ☀️ / 🌙
-      </button>
+      <button id="toggle-dark" class="glass-button">☀️ / 🌙</button>
     </nav>
   </header>
 
@@ -35,6 +33,26 @@
   </section>
 
   <section id="class-section" class="section"></section>
+
+  <div style="text-align:center; margin:20px;">
+    <button id="signIn">Iniciar sesión</button>
+  </div>
+
+  <script type="module">
+    import { UserManager } from 'https://cdn.skypack.dev/oidc-client-ts';
+
+    const userManager = new UserManager({
+      authority: "https://cognito-idp.us-east-1.amazonaws.com/us-east-1_peIOypcf6",
+      client_id: "1a43cn452jearoj6siqsnj70g5",
+      redirect_uri: "https://sistema-reservas-frontend.s3.us-east-1.amazonaws.com/login-success.html",
+      response_type: "code",
+      scope: "openid email phone"
+    });
+
+    document.getElementById('signIn').addEventListener('click', async () => {
+      await userManager.signinRedirect();
+    });
+  </script>
 
   <footer class="footer">
     &copy; <span id="year"></span> Alea Pilates. Todos los derechos reservados.

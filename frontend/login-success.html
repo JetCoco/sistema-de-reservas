@@ -2,25 +2,48 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>Cerrando sesión...</title>
-  <script>
-    (function logout() {
-      const domain = 'https://us-east-1sgjjg5crv.auth.us-east-1.amazoncognito.com';
-      const clientId = '3014r1ilcn23v8fibb2ukr2urv';
-      const logoutRedirect = 'https://sistema-reservas-frontend.s3.us-east-1.amazonaws.com/index.html';
-
-      // Limpiar localStorage
-      localStorage.removeItem('idToken');
-      localStorage.removeItem('email');
-      localStorage.removeItem('role');
-
-      // Redireccionar a la URL de logout de Cognito
-      const logoutUrl = `${domain}/logout?client_id=${clientId}&logout_uri=${encodeURIComponent(logoutRedirect)}`;
-      window.location.href = logoutUrl;
-    })();
-  </script>
+  <title>Inicio de sesión exitoso</title>
 </head>
 <body>
-  <p>Cerrando sesión...</p>
+  <h2>Bienvenido/a</h2>
+  <p>Email: <pre id="email"></pre></p>
+  <p>Access token: <pre id="access-token"></pre></p>
+  <p>ID token: <pre id="id-token"></pre></p>
+  <p>Refresh token: <pre id="refresh-token"></pre></p>
+
+  <button id="signOut">Cerrar sesión</button>
+
+  <script type="module">
+    import { UserManager } from 'https://cdn.skypack.dev/oidc-client-ts';
+
+    const config = {
+      authority: "https://cognito-idp.us-east-1.amazonaws.com/us-east-1_peIOypcf6",
+      client_id: "1a43cn452jearoj6siqsnj70g5",
+      redirect_uri: "https://sistema-reservas-frontend.s3.us-east-1.amazonaws.com/login-success.html",
+      response_type: "code",
+      scope: "openid email phone"
+    };
+
+    const userManager = new UserManager(config);
+
+    userManager.signinCallback().then(user => {
+      document.getElementById("email").textContent = user.profile?.email;
+      document.getElementById("access-token").textContent = user.access_token;
+      document.getElementById("id-token").textContent = user.id_token;
+      document.getElementById("refresh-token").textContent = user.refresh_token;
+
+      // Guardar en localStorage si lo necesitas
+      localStorage.setItem('idToken', user.id_token);
+      localStorage.setItem('email', user.profile?.email);
+    });
+
+    document.getElementById("signOut").addEventListener("click", () => {
+      const logoutUri = "https://sistema-reservas-frontend.s3.us-east-1.amazonaws.com/index.html";
+      const logoutUrl = `https://us-east-1peioypcf6.auth.us-east-1.amazoncognito.com/logout?client_id=1a43cn452jearoj6siqsnj70g5&logout_uri=${encodeURIComponent(logoutUri)}`;
+      
+      localStorage.clear();
+      window.location.href = logoutUrl;
+    });
+  </script>
 </body>
 </html>
