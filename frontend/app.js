@@ -39,7 +39,10 @@ function loadClassesFromApi() {
     .then(classes => {
       const section = document.getElementById('class-section');
       section.innerHTML = '<h2 class="section-title">Reserva tu clase</h2>';
-
+      if (!Array.isArray(classes)) {
+        console.error("La API no devolvió una lista válida:", classes);
+        return;
+      }
       classes.forEach(cls => {
         const available = cls.max_capacity - cls.current_capacity;
 
