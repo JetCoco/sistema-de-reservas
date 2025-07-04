@@ -1,131 +1,106 @@
-const API_URL = 'https://4msxrs5scg.execute-api.us-east-1.amazonaws.com/prod';
+// admin.js
+import { getUserInfo, requireRole } from './auth.js';
+import { signOutRedirect } from './logout.js';
 
-const modal = document.getElementById('modal');
-const modalTitle = document.getElementById('modal-title');
-const btnOpenCreate = document.getElementById('btn-open-create');
-const btnCancel = document.getElementById('btn-cancel');
-const btnSave = document.getElementById('btn-save');
-const form = document.getElementById('class-form');
+const apiBase = 'https://4msxrs5scg.execute-api.us-east-1.amazonaws.com/prod';
+let clientId, userId;
 
-window.onload = loadClasses;
+// Validar rol y obtener datos del usuario
+(async () => {
+  const { role, sub, client_id } = await getUserInfo();
+  requireRole(role, 'admin');
+  userId = sub;
+  clientId = client_id;
+  loadClasses();
+})();
 
-async function loadClasses() {
-  try {
-    const res = await fetch(`${API_URL}/classes`);
-    const classes = await res.json();
+// Botón logout
+document.getElementById('logout-btn').addEventListener('click', signOutRedirect);
 
-    const container = document.getElementById('admin-class-list');
-    container.innerHTML = '';
+// Botón para agregar clase
+document.getElementById('add-class-btn').addEventListener('click', () => {
+  openModal();
+});
 
-    classes.forEach(cls => {
-      const item = document.createElement('div');
-      item.className = 'class-item';
+function loadClasses() {
+  fetch(`${apiBase}/classes?client_id=${clientId}`)
+    .then(res => res.json())
+    .then(classes => {
+      const container = document.getElementById('classes-list');
+      container.innerHTML = '';
 
-      item.innerHTML = `
-        <h3>${cls.icon || '🧘'} ${cls.name}</h3>
-        <p>Instructor: ${cls.instructor || 'No definido'}</p>
-        <p>Cupo: ${cls.current_capacity}/${cls.max_capacity}</p>
-        <div class="class-actions">
-          <button onclick='editClass(${JSON.stringify(cls)})'>✏️ Editar</button>
-          <button class="delete" onclick='deleteClass("${cls.class_id}")'>🗑️ Eliminar</button>
-        </div>
-      `;
+      classes.forEach(cls => {
+        const div = document.createElement('div');
+        div.className = 'class-card glass-card';
+        div.innerHTML = `
+          <h4>${cls.icon || '🧘'} ${cls.name}</h4>
+          <p>Instructor: ${cls.instructor}</p>
+          <p>Fecha y hora: ${cls.datetime}</p>
+          <p>Capacidad: ${cls.current_capacity}/${cls.max_capacity}</p>
+          <div class="actions">
+            <button class="btn edit-btn">Editar</button>
+            <button class="btn delete-btn">Eliminar</button>
+          </div>
+        `;
 
-      container.appendChild(item);
+        div.querySelector('.edit-btn').addEventListener('click', () => openModal(cls));
+        div.querySelector('.delete-btn').addEventListener('click', () => deleteClass(cls.class_id));
+        container.appendChild(div);
+      });
     });
-  } catch (err) {
-    console.error('Error al cargar clases:', err);
-  }
 }
 
-function openModal(mode = 'create', data = {}) {
+function openModal(cls = null) {
+  document.getElementById('modal-title').textContent = cls ? 'Editar Clase' : 'Agregar Clase';
+  document.getElementById('class-name').value = cls?.name || '';
+  document.getElementById('instructor-name').value = cls?.instructor || '';
+  document.getElementById('class-datetime').value = cls?.datetime || '';
+  document.getElementById('max-capacity').value = cls?.max_capacity || '';
+  document.getElementById('class-icon').value = cls?.icon || '';
+
+  const modal = document.getElementById('modal');
   modal.classList.remove('hidden');
-  modal.style.display = 'flex';
-  modalTitle.textContent = mode === 'edit' ? 'Editar Clase' : 'Agregar Clase';
 
-  form['class-id'].value = data.class_id || '';
-  form['name'].value = data.name || '';
-  form['instructor'].value = data.instructor || '';
-  form['max_capacity'].value = data.max_capacity || '';
-  form['current_capacity'].value = data.current_capacity || '';
-  form['icon'].value = data.icon || '';
-}
+  document.getElementById('cancel-btn').onclick = () => modal.classList.add('hidden');
+  document.getElementById('save-btn').onclick = () => {
+    const body = {
+      client_id: clientId,
+      name: document.getElementById('class-name').value,
+      instructor: document.getElementById('instructor-name').value,
+      datetime: document.getElementById('class-datetime').value,
+      max_capacity: parseInt(document.getElementById('max-capacity').value),
+      icon: document.getElementById('class-icon').value
+    };
 
-function closeModal() {
-  modal.style.display = 'none';
-  modal.classList.add('hidden');
-  form.reset();
-}
-
-function editClass(cls) {
-  openModal('edit', cls);
-}
-
-async function deleteClass(class_id) {
-  if (!confirm('¿Estás seguro de eliminar esta clase?')) return;
-
-  try {
-    const res = await fetch(`${API_URL}/classes`, {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ class_id })
-    });
-
-    const result = await res.json();
-    alert(result.message || 'Clase eliminada');
-    loadClasses();
-  } catch (err) {
-    console.error('Error al eliminar clase:', err);
-    alert('Error al eliminar clase');
-  }
-}
-
-// Botón para abrir modal de creación
-btnOpenCreate.addEventListener('click', () => openModal('create'));
-
-// Botón para cancelar/cerrar modal
-btnCancel.addEventListener('click', closeModal);
-
-// Cerrar modal al hacer clic fuera
-window.addEventListener('click', (e) => {
-  if (e.target === modal) {
-    closeModal();
-  }
-});
-
-// Guardar (crear o actualizar)
-btnSave.addEventListener('click', async () => {
-  const classData = {
-    class_id: form['class-id'].value,
-    name: form['name'].value,
-    instructor: form['instructor'].value,
-    max_capacity: parseInt(form['max_capacity'].value || '10'),
-    current_capacity: parseInt(form['current_capacity'].value || '0'),
-    icon: form['icon'].value,
-    client_id: 'alea'  // ✅ requerido por backend
-  };
-
-  const isEdit = !!classData.class_id;
-  const method = isEdit ? 'PUT' : 'POST';
-
-  try {
-    const response = await fetch(`${API_URL}/classes`, {
-      method,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(classData)
-    });
-
-    const result = await response.json();
-
-    if (response.ok) {
-      alert(result.message || (isEdit ? 'Clase actualizada' : 'Clase creada'));
-      closeModal();
-      loadClasses();
+    if (cls) {
+      body.class_id = cls.class_id;
+      fetch(`${apiBase}/classes`, {
+        method: 'PUT',
+        headers: { 'Authorization': token, 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      }).then(() => {
+        modal.classList.add('hidden');
+        loadClasses();
+      });
     } else {
-      alert(result.error || 'Error al guardar la clase');
+      fetch(`${apiBase}/classes`, {
+        method: 'POST',
+        headers: { 'Authorization': token, 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      }).then(() => {
+        modal.classList.add('hidden');
+        loadClasses();
+      });
     }
-  } catch (error) {
-    console.error('Error en la solicitud:', error);
-    alert('Error al guardar la clase');
-  }
-});
+  };
+}
+
+function deleteClass(classId) {
+  if (!confirm('¿Seguro que deseas eliminar esta clase?')) return;
+
+  fetch(`${apiBase}/classes`, {
+    method: 'DELETE',
+    headers: { 'Authorization': token, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ class_id: classId })
+  }).then(() => loadClasses());
+}

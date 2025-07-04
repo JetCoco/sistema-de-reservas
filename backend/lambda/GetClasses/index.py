@@ -1,46 +1,46 @@
 import json
 import boto3
-import decimal
+from boto3.dynamodb.conditions import Key
 
 dynamodb = boto3.resource('dynamodb')
 table = dynamodb.Table('Classes')
 
-# Convertidor para Decimals
-class DecimalEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, decimal.Decimal):
-            return float(obj)
-        return super(DecimalEncoder, self).default(obj)
-
 def lambda_handler(event, context):
     try:
-        # Obtener client_id del token Cognito
+        # Obtener claims del token JWT
         claims = event['requestContext']['authorizer']['claims']
         client_id = claims.get('custom:client_id')
-        if not client_id:
-            return error_response("Falta el client_id en el token JWT")
+        user_id = claims.get('sub')
+        role = claims.get('custom:role')
 
-        # Escanear la tabla y filtrar por client_id (puede optimizarse con una GSI si es necesario)
-        response = table.scan()
-        items = response.get('Items', [])
+        if not client_id or not role:
+            return {
+                'statusCode': 400,
+                'body': json.dumps({'message': 'Faltan atributos en el token'})
+            }
 
-        filtered = [item for item in items if item.get('client_id') == client_id]
+        # Obtener parámetros desde la query string (si existen)
+        params = event.get('queryStringParameters') or {}
+        instructor_id = params.get('instructor_id') if role == 'instructor' else None
+
+        # Construir condición de consulta
+        key_condition = Key('client_id').eq(client_id)
+        if instructor_id:
+            key_condition &= Key('instructor_id').eq(instructor_id)
+
+        # Realizar la consulta
+        response = table.query(
+            IndexName='client_id-index',  # Asegúrate de tener este índice secundario
+            KeyConditionExpression=key_condition
+        )
 
         return {
-            "statusCode": 200,
-            "headers": {
-                "Content-Type": "application/json",
-                "Access-Control-Allow-Origin": "*"
-            },
-            "body": json.dumps(filtered, cls=DecimalEncoder)
+            'statusCode': 200,
+            'body': json.dumps(response['Items'])
         }
 
     except Exception as e:
-        return error_response(str(e))
-
-def error_response(message):
-    return {
-        "statusCode": 500,
-        "headers": {"Access-Control-Allow-Origin": "*"},
-        "body": json.dumps({"error": message})
-    }
+        return {
+            'statusCode': 500,
+            'body': json.dumps({'message': str(e)})
+        }

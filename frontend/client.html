@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Panel del Instructor</title>
+  <title>Panel del Cliente – Alea Pilates</title>
   <link rel="stylesheet" href="style.css" />
   <link rel="icon" type="image/png" href="assets/favicon.png" />
 </head>
@@ -11,22 +11,22 @@
   <header class="header">
     <div class="logo">Alea Pilates</div>
     <nav>
-      <span id="user-email"></span>
+      <span id="user-email" class="user-email"></span>
       <button id="logout-btn" class="glass-button">Cerrar sesión</button>
     </nav>
   </header>
 
-  <section class="section">
+  <main class="section">
     <div class="glass-box">
-      <h2>Mis Clases Programadas</h2>
-      <div id="classes-list"></div>
+      <h2>Tus clases reservadas</h2>
+      <div id="reservations-list"></div>
     </div>
-  </section>
+  </main>
 
   <footer class="footer">
     &copy; <span id="year"></span> Alea Pilates. Todos los derechos reservados.
   </footer>
 
-  <script type="module" src="instructor.js"></script>
+  <script type="module" src="client.js"></script>
 </body>
 </html>

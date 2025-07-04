@@ -1,67 +1,77 @@
 import json
 import boto3
-from botocore.exceptions import ClientError
+import uuid
+from datetime import datetime
 
 dynamodb = boto3.resource('dynamodb')
-classes_table = dynamodb.Table('Classes')
 reservations_table = dynamodb.Table('Reservations')
+classes_table = dynamodb.Table('Classes')
 
 def lambda_handler(event, context):
     try:
+        # Extraer claims del usuario autenticado
         claims = event['requestContext']['authorizer']['claims']
         client_id = claims.get('custom:client_id')
-        user_id = claims.get('sub')  # ID único del usuario
+        user_id = claims.get('sub')
+
         if not client_id or not user_id:
-            return error_response("Faltan claims necesarios en el token")
-
-        body = json.loads(event['body'])
-        class_id = body['class_id']
-
-        # Validar clase
-        class_item = classes_table.get_item(Key={'class_id': class_id}).get('Item')
-        if not class_item:
-            return error_response("Clase no encontrada")
-
-        if class_item['client_id'] != client_id:
-            return error_response("No tienes permiso para reservar en esta clase")
-
-        if class_item['current_capacity'] >= class_item['max_capacity']:
-            return error_response("Clase llena")
-
-        # Insertar reserva
-        reservations_table.put_item(
-            Item={
-                'class_id': class_id,
-                'user_id': user_id,
-                'client_id': client_id,
-                'timestamp': context.aws_request_id
+            return {
+                'statusCode': 400,
+                'body': json.dumps({'message': 'Faltan client_id o user_id en los claims'})
             }
-        )
 
-        # Incrementar capacidad
+        # Obtener datos del cuerpo de la solicitud
+        body = json.loads(event['body'])
+        class_id = body.get('class_id')
+
+        if not class_id:
+            return {
+                'statusCode': 400,
+                'body': json.dumps({'message': 'Falta class_id en la solicitud'})
+            }
+
+        # Verificar capacidad de la clase
+        response = classes_table.get_item(Key={'class_id': class_id, 'client_id': client_id})
+        item = response.get('Item')
+
+        if not item:
+            return {
+                'statusCode': 404,
+                'body': json.dumps({'message': 'Clase no encontrada'})
+            }
+
+        if item['current_capacity'] >= item['max_capacity']:
+            return {
+                'statusCode': 400,
+                'body': json.dumps({'message': 'La clase ya está llena'})
+            }
+
+        # Crear reserva
+        reservation_id = str(uuid.uuid4())
+        timestamp = datetime.utcnow().isoformat()
+
+        reservations_table.put_item(Item={
+            'reservation_id': reservation_id,
+            'client_id': client_id,
+            'user_id': user_id,
+            'class_id': class_id,
+            'timestamp': timestamp
+        })
+
+        # Actualizar capacidad de la clase
         classes_table.update_item(
-            Key={'class_id': class_id},
+            Key={'class_id': class_id, 'client_id': client_id},
             UpdateExpression='SET current_capacity = current_capacity + :inc',
             ExpressionAttributeValues={':inc': 1}
         )
 
-        return success_response("Reserva exitosa")
+        return {
+            'statusCode': 200,
+            'body': json.dumps({'message': 'Reserva realizada con éxito'})
+        }
 
-    except ClientError as e:
-        return error_response(f"Error AWS: {str(e)}")
     except Exception as e:
-        return error_response(f"Error general: {str(e)}")
-
-def success_response(message):
-    return {
-        'statusCode': 200,
-        'headers': {'Content-Type': 'application/json'},
-        'body': json.dumps({'message': message})
-    }
-
-def error_response(message):
-    return {
-        'statusCode': 500,
-        'headers': {'Content-Type': 'application/json'},
-        'body': json.dumps({'error': message})
-    }
+        return {
+            'statusCode': 500,
+            'body': json.dumps({'message': str(e)})
+        }

@@ -1,47 +1,55 @@
-const API_URL = 'https://4msxrs5scg.execute-api.us-east-1.amazonaws.com/prod';
+import { verifyTokenAndGetClaims } from './auth.js';
+import { logout } from './logout.js';
 
-// TODO: Reemplaza estos valores dinámicamente cuando tengas login
-const user_id = 'instructor-001';
-const client_id = 'alea';
+document.getElementById('logout-btn').addEventListener('click', logout);
 
-async function loadInstructorClasses() {
+// Mostrar año actual
+document.getElementById('year').textContent = new Date().getFullYear();
+
+async function main() {
+  const claims = verifyTokenAndGetClaims();
+  if (!claims) return;
+
+  const userEmail = claims.email;
+  const userId = claims.sub;
+  const clientId = claims['custom:client_id'] || claims['client_id'];
+
+  document.getElementById('user-email').textContent = userEmail;
+
+  const endpoint = 'https://4msxrs5scg.execute-api.us-east-1.amazonaws.com/prod/classes';
+
   try {
-    const res = await fetch(`${API_URL}/classes`);
-    const classes = await res.json();
+    const res = await fetch(endpoint);
+    const allClasses = await res.json();
 
-    const filtered = classes.filter(cls =>
-      cls.instructor === user_id && cls.client_id === client_id
+    const instructorClasses = allClasses.filter(cls =>
+      cls.client_id === clientId && cls.instructor_id === userId
     );
 
-    const container = document.getElementById('instructor-class-list');
-    container.innerHTML = '';
-
-    if (filtered.length === 0) {
-      container.innerHTML = '<p>No tienes clases asignadas.</p>';
+    const listDiv = document.getElementById('classes-list');
+    if (instructorClasses.length === 0) {
+      listDiv.innerHTML = '<p>No tienes clases programadas.</p>';
       return;
     }
 
-    filtered.forEach(cls => {
+    instructorClasses.forEach(cls => {
+      const available = cls.max_capacity - cls.current_capacity;
       const card = document.createElement('div');
-      card.className = 'class-card';
-
+      card.className = 'class-card glass-card';
       card.innerHTML = `
         <div>
-          <h3>${cls.icon || '🧘'} ${cls.name}</h3>
-          <p><strong>Instructor:</strong> ${cls.instructor}</p>
-          <p><strong>Capacidad:</strong> ${cls.current_capacity}/${cls.max_capacity}</p>
-          <p><strong>ID Clase:</strong> ${cls.class_id}</p>
+          <h3>${cls.icon || '🧘'} ${cls.class_id.split('T')[1]} – ${cls.name}</h3>
+          <p>Capacidad máxima: ${cls.max_capacity}</p>
+          <p>Ocupación actual: ${cls.current_capacity}</p>
+          <p>Disponibles: ${available}</p>
         </div>
       `;
-
-      container.appendChild(card);
+      listDiv.appendChild(card);
     });
 
-  } catch (err) {
-    console.error('Error al cargar clases del instructor:', err);
-    const container = document.getElementById('instructor-class-list');
-    container.innerHTML = '<p>Error al cargar las clases. Intenta nuevamente.</p>';
+  } catch (error) {
+    console.error('Error al obtener clases del instructor:', error);
   }
 }
 
-window.onload = loadInstructorClasses;
+main();

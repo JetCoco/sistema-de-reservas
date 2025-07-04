@@ -2,48 +2,22 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Inicio de sesión exitoso</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h2>Bienvenido/a</h2>
-  <p>Email: <pre id="email"></pre></p>
-  <p>Access token: <pre id="access-token"></pre></p>
-  <p>ID token: <pre id="id-token"></pre></p>
-  <p>Refresh token: <pre id="refresh-token"></pre></p>
+  <div class="container">
+    <h1>Bienvenido/a</h1>
+    <p><strong>Email:</strong> <span id="email"></span></p>
+    <p><strong>Access token:</strong> <span id="accessToken"></span></p>
+    <p><strong>ID token:</strong> <span id="idToken"></span></p>
+    <p><strong>Refresh token:</strong> <span id="refreshToken"></span></p>
+    <button onclick="logout()">Cerrar sesión</button>
+  </div>
 
-  <button id="signOut">Cerrar sesión</button>
-
-  <script type="module">
-    import { UserManager } from 'https://cdn.skypack.dev/oidc-client-ts';
-
-    const config = {
-      authority: "https://cognito-idp.us-east-1.amazonaws.com/us-east-1_peIOypcf6",
-      client_id: "1a43cn452jearoj6siqsnj70g5",
-      redirect_uri: "https://sistema-reservas-frontend.s3.us-east-1.amazonaws.com/login-success.html",
-      response_type: "code",
-      scope: "openid email phone"
-    };
-
-    const userManager = new UserManager(config);
-
-    userManager.signinCallback().then(user => {
-      document.getElementById("email").textContent = user.profile?.email;
-      document.getElementById("access-token").textContent = user.access_token;
-      document.getElementById("id-token").textContent = user.id_token;
-      document.getElementById("refresh-token").textContent = user.refresh_token;
-
-      // Guardar en localStorage si lo necesitas
-      localStorage.setItem('idToken', user.id_token);
-      localStorage.setItem('email', user.profile?.email);
-    });
-
-    document.getElementById("signOut").addEventListener("click", () => {
-      const logoutUri = "https://sistema-reservas-frontend.s3.us-east-1.amazonaws.com/index.html";
-      const logoutUrl = `https://us-east-1peioypcf6.auth.us-east-1.amazoncognito.com/logout?client_id=1a43cn452jearoj6siqsnj70g5&logout_uri=${encodeURIComponent(logoutUri)}`;
-      
-      localStorage.clear();
-      window.location.href = logoutUrl;
-    });
-  </script>
+  <script src="https://cdn.jsdelivr.net/npm/oidc-client-ts/dist/oidc-client.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jwt-decode/build/jwt-decode.min.js"></script>
+  <script src="login.js"></script>
 </body>
 </html>

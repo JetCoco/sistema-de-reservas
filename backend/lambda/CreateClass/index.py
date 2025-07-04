@@ -1,47 +1,58 @@
 import json
 import boto3
 import uuid
+from datetime import datetime
 
 dynamodb = boto3.resource('dynamodb')
-table = dynamodb.Table('Classes')
+classes_table = dynamodb.Table('Classes')
 
 def lambda_handler(event, context):
     try:
-        # Leer datos del cuerpo
+        # Obtener claims desde Cognito
+        claims = event['requestContext']['authorizer']['claims']
+        client_id = claims.get('custom:client_id')
+        instructor_id = claims.get('sub')  # user_id del instructor
+        email = claims.get('email')
+
+        if not client_id or not instructor_id:
+            return {
+                'statusCode': 400,
+                'body': json.dumps({'message': 'Faltan atributos del usuario autenticado'})
+            }
+
+        # Obtener los datos del body
         data = json.loads(event['body'])
 
-        # Obtener client_id desde el token JWT
-        claims = event['requestContext']['authorizer']['claims']
-        client_id = claims.get('custom:client_id')  # atributo personalizado
-        if not client_id:
-            return error_response("Falta el client_id en el token JWT")
+        class_id = datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S')  # formato ISO
+        name = data.get('name')
+        max_capacity = data.get('max_capacity')
+        icon = data.get('icon', '🧘')
 
-        class_id = data.get('class_id') or str(uuid.uuid4())
+        if not name or not max_capacity:
+            return {
+                'statusCode': 400,
+                'body': json.dumps({'message': 'Faltan campos obligatorios'})
+            }
 
-        item = {
+        # Guardar la nueva clase
+        classes_table.put_item(Item={
             'class_id': class_id,
             'client_id': client_id,
-            'name': data['name'],
-            'instructor': data.get('instructor', 'No definido'),
-            'max_capacity': int(data.get('max_capacity', 10)),
-            'current_capacity': int(data.get('current_capacity', 0)),
-            'icon': data.get('icon', '🧘')
-        }
-
-        table.put_item(Item=item)
+            'name': name,
+            'instructor_id': instructor_id,
+            'icon': icon,
+            'datetime': class_id,
+            'max_capacity': int(max_capacity),
+            'current_capacity': 0
+        })
 
         return {
-            "statusCode": 200,
-            "headers": {"Access-Control-Allow-Origin": "*"},
-            "body": json.dumps({"message": "Clase creada exitosamente", "class_id": class_id})
+            'statusCode': 200,
+            'body': json.dumps({'message': 'Clase creada correctamente'})
         }
 
     except Exception as e:
-        return error_response(str(e))
-
-def error_response(message):
-    return {
-        "statusCode": 500,
-        "headers": {"Access-Control-Allow-Origin": "*"},
-        "body": json.dumps({"error": message})
-    }
+        return {
+            'statusCode': 500,
+            'body': json.dumps({'message': str(e)})
+        }

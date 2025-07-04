@@ -2,41 +2,44 @@ import json
 import boto3
 
 dynamodb = boto3.resource('dynamodb')
-table = dynamodb.Table('Classes')
+classes_table = dynamodb.Table('Classes')
 
 def lambda_handler(event, context):
     try:
+        # Extraer claims desde Cognito
         claims = event['requestContext']['authorizer']['claims']
         client_id = claims.get('custom:client_id')
+
         if not client_id:
-            return error_response("Falta el client_id en el token")
+            return {
+                'statusCode': 400,
+                'body': json.dumps({'message': 'Falta el client_id del usuario autenticado'})
+            }
 
-        data = json.loads(event['body'])
-        class_id = data['class_id']
+        # Obtener class_id desde parámetros de la URL
+        class_id = event['queryStringParameters'].get('class_id') if event.get('queryStringParameters') else None
 
-        existing = table.get_item(Key={'class_id': class_id}).get('Item')
-        if not existing:
-            return error_response("Clase no encontrada")
-        if existing.get('client_id') != client_id:
-            return error_response("No tienes permiso para eliminar esta clase")
+        if not class_id:
+            return {
+                'statusCode': 400,
+                'body': json.dumps({'message': 'Falta el parámetro class_id'})
+            }
 
-        response = table.delete_item(Key={'class_id': class_id})
+        # Eliminar la clase
+        classes_table.delete_item(
+            Key={
+                'class_id': class_id,
+                'client_id': client_id
+            }
+        )
 
         return {
-            "statusCode": 200,
-            "headers": {"Access-Control-Allow-Origin": "*"},
-            "body": json.dumps({
-                "message": "Clase eliminada correctamente",
-                "response": response
-            })
+            'statusCode': 200,
+            'body': json.dumps({'message': 'Clase eliminada exitosamente'})
         }
 
     except Exception as e:
-        return error_response(str(e))
-
-def error_response(msg):
-    return {
-        "statusCode": 500,
-        "headers": {"Access-Control-Allow-Origin": "*"},
-        "body": json.dumps({"error": msg})
-    }
+        return {
+            'statusCode': 500,
+            'body': json.dumps({'message': str(e)})
+        }

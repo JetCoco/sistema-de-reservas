@@ -76,7 +76,7 @@ function reserveClass(classId) {
   const userId = 'usuario001';
   fetch('https://4msxrs5scg.execute-api.us-east-1.amazonaws.com/prod/reserve', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Authorization': token, 'Content-Type': 'application/json' },
     body: JSON.stringify({ class_id: classId, user_id: userId })
   })
     .then(res => res.json())

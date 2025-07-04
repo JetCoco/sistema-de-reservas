@@ -1,52 +1,43 @@
+<!-- admin.html -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Administrador – ALEA Pilates Studio</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Panel de Administración - Alea Pilates</title>
+  <link rel="stylesheet" href="style.css" />
+  <script type="module" src="admin.js"></script>
 </head>
-<body>
-  <div class="container">
-    <h1>Panel de Administración – ALEA Pilates Studio</h1>
+<body class="light">
+  <header class="header">
+    <div class="logo">Admin Panel</div>
+    <nav>
+      <button id="logout-btn" class="glass-button">Cerrar sesión</button>
+    </nav>
+  </header>
 
-    <div class="admin-controls">
-      <button id="btn-open-create">➕ Crear Clase</button>
+  <section class="section">
+    <div class="glass-box">
+      <h2>Gestión de Clases</h2>
+      <button id="add-class-btn" class="btn">Agregar Clase</button>
+      <div id="classes-list"></div>
     </div>
-
-    <div id="admin-class-list" class="class-list">
-      <!-- Clases renderizadas aquí -->
-    </div>
-  </div>
+  </section>
 
   <!-- Modal -->
   <div id="modal" class="modal hidden">
-    <div class="modal-content">
-      <h2 id="modal-title">Agregar Clase</h2>
-      <form id="class-form" class="class-form">
-        <input type="hidden" name="class-id">
-        <label>Nombre de la Clase</label>
-        <input type="text" name="name" placeholder="Ej. Pilates Básico" required>
-
-        <label>Instructor</label>
-        <input type="text" name="instructor" placeholder="Ej. Ale" required>
-
-        <label>Capacidad Máxima</label>
-        <input type="number" name="max_capacity" placeholder="Ej. 5" required>
-
-        <label>Capacidad Actual</label>
-        <input type="number" name="current_capacity" placeholder="Ej. 0" required>
-
-        <label>Emoji o ícono (opcional)</label>
-        <input type="text" name="icon" placeholder="Ej. 🧘">
-
-        <div class="form-buttons">
-          <button type="button" id="btn-cancel">Cancelar</button>
-          <button type="button" id="btn-save">Guardar</button>
-        </div>
-      </form>
+    <div class="modal-content glass-box">
+      <h3 id="modal-title">Agregar Clase</h3>
+      <label>Nombre:<input type="text" id="class-name" /></label>
+      <label>Instructor:<input type="text" id="instructor-name" /></label>
+      <label>Fecha y hora:<input type="datetime-local" id="class-datetime" /></label>
+      <label>Capacidad máxima:<input type="number" id="max-capacity" /></label>
+      <label>Ícono:<input type="text" id="class-icon" placeholder="🧘" /></label>
+      <div class="modal-actions">
+        <button id="save-btn" class="btn">Guardar</button>
+        <button id="cancel-btn" class="btn">Cancelar</button>
+      </div>
     </div>
   </div>
-
-  <script src="admin.js"></script>
 </body>
 </html>
