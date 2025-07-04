@@ -1,19 +1,16 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>ALEA Pilates Studio</title>
 </head>
 <body>
   <h1>Bienvenido/a a ALEA Pilates Studio</h1>
-  <button id="loginBtn">Iniciar sesión</button>
+  <button onclick="login()">Iniciar sesión</button>
 
   <script type="module">
-    import { userManager } from "./main.js";
-
-    document.getElementById("loginBtn").addEventListener("click", () => {
-      userManager.signinRedirect();
-    });
+    import { signInRedirect } from './main.js';
+    window.login = signInRedirect;
   </script>
 </body>
 </html>

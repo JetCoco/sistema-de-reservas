@@ -1,31 +1,28 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <title>Redirigiendo...</title>
+  <meta charset="UTF-8">
+  <title>Login exitoso</title>
 </head>
 <body>
-  <h2>Iniciando sesión...</h2>
-
+  <h2>Procesando autenticación...</h2>
   <script type="module">
-    import { userManager } from "./main.js";
+    import { userManager } from './main.js';
 
     userManager.signinRedirectCallback().then(user => {
+      const idToken = user.id_token;
       const claims = user.profile;
-      localStorage.setItem("access_token", user.access_token);
-      localStorage.setItem("id_token", user.id_token);
-      localStorage.setItem("email", claims.email);
-      localStorage.setItem("rol", claims["custom:role"] || "cliente");
+      const role = claims["custom:role"] || claims["role"] || "cliente"; // Ajusta según tu token
 
-      if (claims["custom:role"] === "admin") {
+      if (role === "admin") {
         window.location.href = "admin.html";
-      } else if (claims["custom:role"] === "instructor") {
+      } else if (role === "instructor") {
         window.location.href = "instructor.html";
       } else {
-        window.location.href = "index.html";
+        window.location.href = "cliente.html";
       }
-    }).catch(error => {
-      console.error("Error en login callback:", error);
+    }).catch(err => {
+      console.error("Error en login callback:", err);
       document.body.innerHTML = "<h3>Error durante el inicio de sesión.</h3>";
     });
   </script>
