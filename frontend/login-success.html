@@ -2,11 +2,32 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Redirigiendo...</title>
 </head>
 <body>
-  <p>Iniciando sesión... por favor espera.</p>
-  <script src="login.js"></script>
+  <h2>Iniciando sesión...</h2>
+
+  <script type="module">
+    import { userManager } from "./main.js";
+
+    userManager.signinRedirectCallback().then(user => {
+      const claims = user.profile;
+      localStorage.setItem("access_token", user.access_token);
+      localStorage.setItem("id_token", user.id_token);
+      localStorage.setItem("email", claims.email);
+      localStorage.setItem("rol", claims["custom:role"] || "cliente");
+
+      if (claims["custom:role"] === "admin") {
+        window.location.href = "admin.html";
+      } else if (claims["custom:role"] === "instructor") {
+        window.location.href = "instructor.html";
+      } else {
+        window.location.href = "index.html";
+      }
+    }).catch(error => {
+      console.error("Error en login callback:", error);
+      document.body.innerHTML = "<h3>Error durante el inicio de sesión.</h3>";
+    });
+  </script>
 </body>
 </html>

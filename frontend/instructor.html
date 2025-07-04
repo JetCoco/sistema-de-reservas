@@ -2,21 +2,26 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Panel del Instructor</title>
-  <link rel="stylesheet" href="style.css">
+  <title>Panel Instructor</title>
 </head>
 <body>
-  <div class="instructor-container glass-card">
-    <h1>Panel del Instructor</h1>
-    <p><strong>Usuario:</strong> <span id="instructorEmail"></span></p>
+  <h1>Panel del Instructor</h1>
+  <p>Bienvenido, <span id="userEmail"></span></p>
+  <button id="logoutBtn">Cerrar sesión</button>
 
-    <button id="logoutBtn">Cerrar sesión</button>
+  <script type="module">
+    import { signOutRedirect } from "./main.js";
 
-    <div id="classListContainer"></div>
-  </div>
+    const email = localStorage.getItem("email");
+    const rol = localStorage.getItem("rol");
 
-  <script src="instructor.js"></script>
-  <script src="logout.js"></script>
+    if (rol !== "instructor") {
+      window.location.href = "index.html";
+    } else {
+      document.getElementById("userEmail").textContent = email;
+    }
+
+    document.getElementById("logoutBtn").addEventListener("click", signOutRedirect);
+  </script>
 </body>
 </html>

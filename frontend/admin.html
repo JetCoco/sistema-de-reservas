@@ -1,33 +1,27 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Panel Admin</title>
-  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>Bienvenido, administrador</h1>
-  <p>Email: <span id="email"></span></p>
-  <button onclick="logout()">Cerrar sesión</button>
+  <h1>Panel del Administrador</h1>
+  <p>Bienvenido, <span id="userEmail"></span></p>
+  <button id="logoutBtn">Cerrar sesión</button>
 
-  <script>
+  <script type="module">
+    import { signOutRedirect } from "./main.js";
+
     const email = localStorage.getItem("email");
-    const role = localStorage.getItem("role");
-    document.getElementById("email").textContent = email;
+    const rol = localStorage.getItem("rol");
 
-    if (role !== "admin") {
-      alert("Acceso no autorizado.");
+    if (rol !== "admin") {
       window.location.href = "index.html";
+    } else {
+      document.getElementById("userEmail").textContent = email;
     }
 
-    function logout() {
-      localStorage.clear();
-      const domain = "https://us-east-1peioypcf6.auth.us-east-1.amazoncognito.com";
-      const clientId = "1a43cn452jearoj6siqsnj70g5";
-      const logoutRedirect = "https://sistema-reservas-frontend.s3.us-east-1.amazonaws.com/index.html";
-      const logoutUrl = `${domain}/logout?client_id=${clientId}&logout_uri=${encodeURIComponent(logoutRedirect)}`;
-      window.location.href = logoutUrl;
-    }
+    document.getElementById("logoutBtn").addEventListener("click", signOutRedirect);
   </script>
 </body>
 </html>

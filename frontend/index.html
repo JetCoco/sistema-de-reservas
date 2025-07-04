@@ -1,39 +1,18 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Inicio - ALEA Pilates Studio</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <title>ALEA Pilates Studio</title>
 </head>
 <body>
-  <header>
-    <h1>Bienvenido/a a ALEA Pilates Studio</h1>
-  </header>
-
-  <section>
-    <h2>Nuestro enfoque</h2>
-    <p>Combinamos elegancia, precisión y cuidado para ayudarte a alcanzar tu mejor versión.</p>
-  </section>
-
-  <section>
-    <h2>Reserva tu clase</h2>
-    <div id="classes">Cargando clases...</div>
-  </section>
-
+  <h1>Bienvenido/a a ALEA Pilates Studio</h1>
   <button id="loginBtn">Iniciar sesión</button>
 
-  <footer>
-    <p>© ALEA Pilates Studio</p>
-  </footer>
+  <script type="module">
+    import { userManager } from "./main.js";
 
-  <script>
     document.getElementById("loginBtn").addEventListener("click", () => {
-      const domain = "https://us-east-1peioypcf6.auth.us-east-1.amazoncognito.com";
-      const clientId = "1a43cn452jearoj6siqsnj70g5";
-      const redirectUri = "https://sistema-reservas-frontend.s3.us-east-1.amazonaws.com/login-success.html";
-
-      const loginUrl = `${domain}/login?client_id=${clientId}&response_type=token&scope=email+openid+profile&redirect_uri=${encodeURIComponent(redirectUri)}`;
-      window.location.href = loginUrl;
+      userManager.signinRedirect();
     });
   </script>
 </body>
