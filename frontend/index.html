@@ -1,16 +1,31 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>ALEA Pilates Studio</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 50px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+    }
+  </style>
 </head>
 <body>
-  <h1>Bienvenido/a a ALEA Pilates Studio</h1>
-  <button onclick="login()">Iniciar sesión</button>
+  <h1>Bienvenido/a Pilates Studio</h1>
+  <button id="loginBtn">Iniciar sesión</button>
 
   <script type="module">
     import { signInRedirect } from './main.js';
-    window.login = signInRedirect;
+
+    document.getElementById('loginBtn').addEventListener('click', () => {
+      signInRedirect();
+    });
   </script>
 </body>
 </html>
