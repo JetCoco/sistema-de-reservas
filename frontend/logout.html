@@ -1,26 +1,15 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <title>Cerrando sesión...</title>
-  <script>
-    (function logout() {
-      const domain = 'https://us-east-1sgjjg5crv.auth.us-east-1.amazoncognito.com';
-      const clientId = '3014r1ilcn23v8fibb2ukr2urv';
-      const logoutRedirect = 'https://sistema-reservas-frontend.s3.us-east-1.amazonaws.com/index.html';
+// logout.js
 
-      // Limpiar localStorage
-      localStorage.removeItem('idToken');
-      localStorage.removeItem('email');
-      localStorage.removeItem('role');
-
-      // Redireccionar a la URL de logout de Cognito
-      const logoutUrl = `${domain}/logout?client_id=${clientId}&logout_uri=${encodeURIComponent(logoutRedirect)}`;
-      window.location.href = logoutUrl;
-    })();
-  </script>
-</head>
-<body>
-  <p>Cerrando sesión...</p>
-</body>
-</html>
+(function () {
+    const domain = 'https://us-east-1peioypcf6.auth.us-east-1.amazoncognito.com';
+    const clientId = '1a43cn452jearoj6siqsnj70g5';
+    const logoutRedirect = 'https://sistema-reservas-frontend.s3.us-east-1.amazonaws.com/index.html';
+  
+    // Limpiar almacenamiento local y de sesión
+    localStorage.clear();
+    sessionStorage.clear();
+  
+    // Redirigir a la URL de logout de Cognito
+    const logoutUrl = `${domain}/logout?client_id=${clientId}&logout_uri=${encodeURIComponent(logoutRedirect)}`;
+    window.location.href = logoutUrl;
+  })();
