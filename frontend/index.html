@@ -2,54 +2,39 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ALEA Pilates Studio – Reserva tu clase</title>
+  <title>Inicio - ALEA Pilates Studio</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <header>
     <h1>Bienvenido/a a ALEA Pilates Studio</h1>
-    <button id="loginBtn">Iniciar sesión</button>
   </header>
 
-  <section class="intro glass">
+  <section>
     <h2>Nuestro enfoque</h2>
     <p>Combinamos elegancia, precisión y cuidado para ayudarte a alcanzar tu mejor versión.</p>
   </section>
 
-  <section class="class-list glass">
+  <section>
     <h2>Reserva tu clase</h2>
-    <div id="classesContainer">Cargando clases...</div>
+    <div id="classes">Cargando clases...</div>
   </section>
 
+  <button id="loginBtn">Iniciar sesión</button>
+
   <footer>
-    <p>&copy; Alea Pilates Studio – Todos los derechos reservados</p>
+    <p>© ALEA Pilates Studio</p>
   </footer>
 
   <script>
-    // Verificar sesión activa
-    const role = localStorage.getItem("role");
-    const accessToken = localStorage.getItem("accessToken");
-
-    if (role && accessToken) {
-      if (role === "admin") {
-        window.location.href = "admin.html";
-      } else if (role === "instructor") {
-        window.location.href = "instructor.html";
-      } else {
-        document.getElementById("loginBtn").style.display = "none";
-      }
-    }
-
-    // Iniciar sesión con Cognito Hosted UI
     document.getElementById("loginBtn").addEventListener("click", () => {
-    const domain = "https://us-east-1peioypcf6.auth.us-east-1.amazoncognito.com";
-    const clientId = "1a43cn452jearoj6siqsnj70g5";
-    const redirectUri = "https://sistema-reservas-frontend.s3.us-east-1.amazonaws.com/login-success.html";
+      const domain = "https://us-east-1peioypcf6.auth.us-east-1.amazoncognito.com";
+      const clientId = "1a43cn452jearoj6siqsnj70g5";
+      const redirectUri = "https://sistema-reservas-frontend.s3.us-east-1.amazonaws.com/login-success.html";
 
-    const loginUrl = `${domain}/login?client_id=${clientId}&response_type=code&scope=email+openid+phone&redirect_uri=${encodeURIComponent(redirectUri)}`;
-    window.location.href = loginUrl;
-  });
+      const loginUrl = `${domain}/login?client_id=${clientId}&response_type=token&scope=email+openid+profile&redirect_uri=${encodeURIComponent(redirectUri)}`;
+      window.location.href = loginUrl;
+    });
   </script>
 </body>
 </html>

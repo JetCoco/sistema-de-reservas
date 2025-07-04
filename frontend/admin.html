@@ -1,42 +1,33 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Panel de Administración</title>
+  <meta charset="UTF-8">
+  <title>Panel Admin</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="admin-container glass-card">
-    <h1>Panel de Administración</h1>
-    <p><strong>Usuario:</strong> <span id="adminEmail"></span></p>
+  <h1>Bienvenido, administrador</h1>
+  <p>Email: <span id="email"></span></p>
+  <button onclick="logout()">Cerrar sesión</button>
 
-    <button id="logoutBtn">Cerrar sesión</button>
+  <script>
+    const email = localStorage.getItem("email");
+    const role = localStorage.getItem("role");
+    document.getElementById("email").textContent = email;
 
-    <div id="classListContainer"></div>
+    if (role !== "admin") {
+      alert("Acceso no autorizado.");
+      window.location.href = "index.html";
+    }
 
-    <!-- Modal para agregar/editar clases -->
-    <div id="classModal" class="modal hidden">
-      <div class="modal-content glass-card">
-        <h2 id="modalTitle">Agregar Clase</h2>
-        <form id="classForm">
-          <input type="hidden" id="classId">
-          <label>Nombre de la clase:</label>
-          <input type="text" id="className" required>
-          <label>Instructor ID:</label>
-          <input type="text" id="instructorId" required>
-          <label>Capacidad máxima:</label>
-          <input type="number" id="maxCapacity" required>
-          <label>Fecha y hora:</label>
-          <input type="datetime-local" id="classDateTime" required>
-          <button type="submit">Guardar</button>
-          <button type="button" id="cancelModal">Cancelar</button>
-        </form>
-      </div>
-    </div>
-  </div>
-
-  <script src="admin.js"></script>
-  <script src="logout.js"></script>
+    function logout() {
+      localStorage.clear();
+      const domain = "https://us-east-1peioypcf6.auth.us-east-1.amazoncognito.com";
+      const clientId = "1a43cn452jearoj6siqsnj70g5";
+      const logoutRedirect = "https://sistema-reservas-frontend.s3.us-east-1.amazonaws.com/index.html";
+      const logoutUrl = `${domain}/logout?client_id=${clientId}&logout_uri=${encodeURIComponent(logoutRedirect)}`;
+      window.location.href = logoutUrl;
+    }
+  </script>
 </body>
 </html>
