@@ -1,7 +1,7 @@
 import { UserManager } from "https://cdn.skypack.dev/oidc-client-ts";
 
 const cognitoAuthConfig = {
-  authority: "https://us-east-1peioypcf6.auth.us-east-1.amazoncognito.com", // ← CORREGIDO
+  authority: "https://cognito-idp.us-east-1.amazonaws.com/us-east-1_peIOypcf6", // <-- Este sí funciona
   client_id: "1a43cn452jearoj6siqsnj70g5",
   redirect_uri: "https://sistema-reservas-frontend.s3.us-east-1.amazonaws.com/login-success.html",
   response_type: "code",
