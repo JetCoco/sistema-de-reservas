@@ -1,43 +1,42 @@
-<!-- admin.html -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Panel de Administración - Alea Pilates</title>
-  <link rel="stylesheet" href="style.css" />
-  <script type="module" src="admin.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Panel de Administración</title>
+  <link rel="stylesheet" href="style.css">
 </head>
-<body class="light">
-  <header class="header">
-    <div class="logo">Admin Panel</div>
-    <nav>
-      <button id="logout-btn" class="glass-button">Cerrar sesión</button>
-    </nav>
-  </header>
+<body>
+  <div class="admin-container glass-card">
+    <h1>Panel de Administración</h1>
+    <p><strong>Usuario:</strong> <span id="adminEmail"></span></p>
 
-  <section class="section">
-    <div class="glass-box">
-      <h2>Gestión de Clases</h2>
-      <button id="add-class-btn" class="btn">Agregar Clase</button>
-      <div id="classes-list"></div>
-    </div>
-  </section>
+    <button id="logoutBtn">Cerrar sesión</button>
 
-  <!-- Modal -->
-  <div id="modal" class="modal hidden">
-    <div class="modal-content glass-box">
-      <h3 id="modal-title">Agregar Clase</h3>
-      <label>Nombre:<input type="text" id="class-name" /></label>
-      <label>Instructor:<input type="text" id="instructor-name" /></label>
-      <label>Fecha y hora:<input type="datetime-local" id="class-datetime" /></label>
-      <label>Capacidad máxima:<input type="number" id="max-capacity" /></label>
-      <label>Ícono:<input type="text" id="class-icon" placeholder="🧘" /></label>
-      <div class="modal-actions">
-        <button id="save-btn" class="btn">Guardar</button>
-        <button id="cancel-btn" class="btn">Cancelar</button>
+    <div id="classListContainer"></div>
+
+    <!-- Modal para agregar/editar clases -->
+    <div id="classModal" class="modal hidden">
+      <div class="modal-content glass-card">
+        <h2 id="modalTitle">Agregar Clase</h2>
+        <form id="classForm">
+          <input type="hidden" id="classId">
+          <label>Nombre de la clase:</label>
+          <input type="text" id="className" required>
+          <label>Instructor ID:</label>
+          <input type="text" id="instructorId" required>
+          <label>Capacidad máxima:</label>
+          <input type="number" id="maxCapacity" required>
+          <label>Fecha y hora:</label>
+          <input type="datetime-local" id="classDateTime" required>
+          <button type="submit">Guardar</button>
+          <button type="button" id="cancelModal">Cancelar</button>
+        </form>
       </div>
     </div>
   </div>
+
+  <script src="admin.js"></script>
+  <script src="logout.js"></script>
 </body>
 </html>

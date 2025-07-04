@@ -1,63 +1,54 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Alea Pilates</title>
-  <link rel="stylesheet" href="style.css" />
-  <link rel="icon" type="image/png" href="assets/favicon.png" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ALEA Pilates Studio – Reserva tu clase</title>
+  <link rel="stylesheet" href="style.css">
 </head>
-<body class="light">
-  <header class="header">
-    <div class="logo">Alea Pilates</div>
-    <nav>
-      <a href="#">Inicio</a>
-      <a href="#">Reservas</a>
-      <a href="#">Clases</a>
-      <button id="toggle-dark" class="glass-button">☀️ / 🌙</button>
-    </nav>
+<body>
+  <header>
+    <h1>Bienvenido/a a ALEA Pilates Studio</h1>
+    <button id="loginBtn">Iniciar sesión</button>
   </header>
 
-  <section class="hero">
-    <div class="glass-box">
-      <h1>Bienvenidos a Alea Pilates Studio</h1>
-      <p>Descubre una experiencia única de bienestar y movimiento consciente.</p>
-    </div>
+  <section class="intro glass">
+    <h2>Nuestro enfoque</h2>
+    <p>Combinamos elegancia, precisión y cuidado para ayudarte a alcanzar tu mejor versión.</p>
   </section>
 
-  <section class="section">
-    <div class="glass-box">
-      <h2>Nuestro enfoque</h2>
-      <p>Combinamos elegancia, precisión y cuidado para ayudarte a alcanzar tu mejor versión.</p>
-    </div>
+  <section class="class-list glass">
+    <h2>Reserva tu clase</h2>
+    <div id="classesContainer">Cargando clases...</div>
   </section>
 
-  <section id="class-section" class="section"></section>
-
-  <div style="text-align:center; margin:20px;">
-    <button id="signIn">Iniciar sesión</button>
-  </div>
-
-  <script type="module">
-    import { UserManager } from 'https://cdn.skypack.dev/oidc-client-ts';
-
-    const userManager = new UserManager({
-      authority: "https://cognito-idp.us-east-1.amazonaws.com/us-east-1_peIOypcf6",
-      client_id: "1a43cn452jearoj6siqsnj70g5",
-      redirect_uri: "https://sistema-reservas-frontend.s3.us-east-1.amazonaws.com/login-success.html",
-      response_type: "code",
-      scope: "openid email phone"
-    });
-
-    document.getElementById('signIn').addEventListener('click', async () => {
-      await userManager.signinRedirect();
-    });
-  </script>
-
-  <footer class="footer">
-    &copy; <span id="year"></span> Alea Pilates. Todos los derechos reservados.
+  <footer>
+    <p>&copy; Alea Pilates Studio – Todos los derechos reservados</p>
   </footer>
 
-  <script src="app.js"></script>
+  <script>
+    // Verificar sesión activa
+    const role = localStorage.getItem("role");
+    const accessToken = localStorage.getItem("accessToken");
+
+    if (role && accessToken) {
+      if (role === "admin") {
+        window.location.href = "admin.html";
+      } else if (role === "instructor") {
+        window.location.href = "instructor.html";
+      } else {
+        document.getElementById("loginBtn").style.display = "none";
+      }
+    }
+
+    // Iniciar sesión con Cognito Hosted UI
+    document.getElementById("loginBtn").addEventListener("click", () => {
+      const domain = "https://us-east-1peioypcf6.auth.us-east-1.amazoncognito.com";
+      const clientId = "1a43cn452jearoj6siqsnj70g5";
+      const redirectUri = "https://sistema-reservas-frontend.s3.us-east-1.amazonaws.com/login-success.html";
+      const loginUrl = `${domain}/login?client_id=${clientId}&response_type=token&scope=email+openid+profile&redirect_uri=${encodeURIComponent(redirectUri)}`;
+      window.location.href = loginUrl;
+    });
+  </script>
 </body>
 </html>

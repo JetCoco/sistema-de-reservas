@@ -1,106 +1,89 @@
 // admin.js
-import { getUserInfo, requireRole } from './auth.js';
-import { signOutRedirect } from './logout.js';
 
-const apiBase = 'https://4msxrs5scg.execute-api.us-east-1.amazonaws.com/prod';
-let clientId, userId;
+document.addEventListener("DOMContentLoaded", () => {
+  const email = localStorage.getItem("email");
+  const role = localStorage.getItem("role");
 
-// Validar rol y obtener datos del usuario
-(async () => {
-  const { role, sub, client_id } = await getUserInfo();
-  requireRole(role, 'admin');
-  userId = sub;
-  clientId = client_id;
+  if (!email || role !== "admin") {
+    window.location.href = "index.html";
+    return;
+  }
+
+  document.getElementById("adminEmail").textContent = email;
+  document.getElementById("logoutBtn").addEventListener("click", logout);
+
   loadClasses();
-})();
 
-// Botón logout
-document.getElementById('logout-btn').addEventListener('click', signOutRedirect);
+  // Modal
+  const modal = document.getElementById("classModal");
+  const form = document.getElementById("classForm");
+  const cancelBtn = document.getElementById("cancelModal");
 
-// Botón para agregar clase
-document.getElementById('add-class-btn').addEventListener('click', () => {
-  openModal();
+  cancelBtn.onclick = () => {
+    modal.classList.add("hidden");
+  };
+
+  form.onsubmit = (e) => {
+    e.preventDefault();
+    const classData = {
+      class_id: document.getElementById("classId").value || undefined,
+      name: document.getElementById("className").value,
+      instructor_id: document.getElementById("instructorId").value,
+      max_capacity: parseInt(document.getElementById("maxCapacity").value),
+      datetime: document.getElementById("classDateTime").value,
+      client_id: "alea"
+    };
+
+    const isEdit = !!classData.class_id;
+    const url = `https://4msxrs5scg.execute-api.us-east-1.amazonaws.com/prod/classes`;
+    const method = isEdit ? "PUT" : "POST";
+
+    fetch(url, {
+      method,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: localStorage.getItem("idToken")
+      },
+      body: JSON.stringify(classData)
+    })
+      .then(res => res.json())
+      .then(() => {
+        modal.classList.add("hidden");
+        loadClasses();
+      });
+  };
 });
 
 function loadClasses() {
-  fetch(`${apiBase}/classes?client_id=${clientId}`)
+  fetch("https://4msxrs5scg.execute-api.us-east-1.amazonaws.com/prod/classes", {
+    headers: {
+      Authorization: localStorage.getItem("idToken")
+    }
+  })
     .then(res => res.json())
     .then(classes => {
-      const container = document.getElementById('classes-list');
-      container.innerHTML = '';
+      const container = document.getElementById("classListContainer");
+      container.innerHTML = "";
 
       classes.forEach(cls => {
-        const div = document.createElement('div');
-        div.className = 'class-card glass-card';
+        const div = document.createElement("div");
+        div.className = "glass-card class-row";
         div.innerHTML = `
-          <h4>${cls.icon || '🧘'} ${cls.name}</h4>
-          <p>Instructor: ${cls.instructor}</p>
-          <p>Fecha y hora: ${cls.datetime}</p>
-          <p>Capacidad: ${cls.current_capacity}/${cls.max_capacity}</p>
-          <div class="actions">
-            <button class="btn edit-btn">Editar</button>
-            <button class="btn delete-btn">Eliminar</button>
-          </div>
+          <strong>${cls.name}</strong> – ${cls.datetime} – ${cls.max_capacity} lugares<br/>
+          <button onclick="editClass('${cls.class_id}', '${cls.name}', '${cls.instructor_id}', '${cls.max_capacity}', '${cls.datetime}')">Editar</button>
         `;
-
-        div.querySelector('.edit-btn').addEventListener('click', () => openModal(cls));
-        div.querySelector('.delete-btn').addEventListener('click', () => deleteClass(cls.class_id));
         container.appendChild(div);
       });
     });
 }
 
-function openModal(cls = null) {
-  document.getElementById('modal-title').textContent = cls ? 'Editar Clase' : 'Agregar Clase';
-  document.getElementById('class-name').value = cls?.name || '';
-  document.getElementById('instructor-name').value = cls?.instructor || '';
-  document.getElementById('class-datetime').value = cls?.datetime || '';
-  document.getElementById('max-capacity').value = cls?.max_capacity || '';
-  document.getElementById('class-icon').value = cls?.icon || '';
+function editClass(id, name, instructorId, maxCap, datetime) {
+  document.getElementById("modalTitle").textContent = "Editar Clase";
+  document.getElementById("classId").value = id;
+  document.getElementById("className").value = name;
+  document.getElementById("instructorId").value = instructorId;
+  document.getElementById("maxCapacity").value = maxCap;
+  document.getElementById("classDateTime").value = datetime;
 
-  const modal = document.getElementById('modal');
-  modal.classList.remove('hidden');
-
-  document.getElementById('cancel-btn').onclick = () => modal.classList.add('hidden');
-  document.getElementById('save-btn').onclick = () => {
-    const body = {
-      client_id: clientId,
-      name: document.getElementById('class-name').value,
-      instructor: document.getElementById('instructor-name').value,
-      datetime: document.getElementById('class-datetime').value,
-      max_capacity: parseInt(document.getElementById('max-capacity').value),
-      icon: document.getElementById('class-icon').value
-    };
-
-    if (cls) {
-      body.class_id = cls.class_id;
-      fetch(`${apiBase}/classes`, {
-        method: 'PUT',
-        headers: { 'Authorization': token, 'Content-Type': 'application/json' },
-        body: JSON.stringify(body)
-      }).then(() => {
-        modal.classList.add('hidden');
-        loadClasses();
-      });
-    } else {
-      fetch(`${apiBase}/classes`, {
-        method: 'POST',
-        headers: { 'Authorization': token, 'Content-Type': 'application/json' },
-        body: JSON.stringify(body)
-      }).then(() => {
-        modal.classList.add('hidden');
-        loadClasses();
-      });
-    }
-  };
-}
-
-function deleteClass(classId) {
-  if (!confirm('¿Seguro que deseas eliminar esta clase?')) return;
-
-  fetch(`${apiBase}/classes`, {
-    method: 'DELETE',
-    headers: { 'Authorization': token, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ class_id: classId })
-  }).then(() => loadClasses());
+  document.getElementById("classModal").classList.remove("hidden");
 }
