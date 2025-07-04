@@ -43,12 +43,13 @@
 
     // Iniciar sesión con Cognito Hosted UI
     document.getElementById("loginBtn").addEventListener("click", () => {
-      const domain = "https://us-east-1peioypcf6.auth.us-east-1.amazoncognito.com";
-      const clientId = "1a43cn452jearoj6siqsnj70g5";
-      const redirectUri = "https://sistema-reservas-frontend.s3.us-east-1.amazonaws.com/login-success.html";
-      const loginUrl = `${domain}/login?client_id=${clientId}&response_type=token&scope=email+openid+profile&redirect_uri=${encodeURIComponent(redirectUri)}`;
-      window.location.href = loginUrl;
-    });
+    const domain = "https://us-east-1peioypcf6.auth.us-east-1.amazoncognito.com";
+    const clientId = "1a43cn452jearoj6siqsnj70g5";
+    const redirectUri = "https://sistema-reservas-frontend.s3.us-east-1.amazonaws.com/login-success.html";
+
+    const loginUrl = `${domain}/login?client_id=${clientId}&response_type=code&scope=email+openid+phone&redirect_uri=${encodeURIComponent(redirectUri)}`;
+    window.location.href = loginUrl;
+  });
   </script>
 </body>
 </html>
